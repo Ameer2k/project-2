@@ -7,15 +7,114 @@
   </head>
   <body>
     <%- include('../partials/navbar') %>
-    <h1>Create a new account!</h1>
-    <form action="/auth/sign-up" method="post">
-      <label for="username">Username:</label>
-      <input type="text" name="username" id="username" />
-      <label for="password">Password:</label>
-      <input type="password" name="password" id="password" />
-      <label for="confirmPassword">Confirm Password:</label>
-      <input type="password" name="confirmPassword" id="confirmPassword" />
-      <button type="submit">Sign up</button>
-    </form>
+    <div class="signup-container">
+      <h2>Create Your Account</h2>
+
+      <!-- Sliding Toggle Switch -->
+      <div class="toggle-container" id="roleToggle">
+        <div class="toggle-slider"></div>
+        <button type="button" class="toggle-btn active" data-role="user">
+          Normal User
+        </button>
+        <button type="button" class="toggle-btn" data-role="photographer">
+          Photographer
+        </button>
+      </div>
+
+      <!-- Main Sign Up Form -->
+      <form action="/auth/sign-up" method="POST" id="signup-form">
+        <!-- Hidden input to pass the selected role to your server -->
+        <input type="hidden" name="role" id="active-role" value="user" />
+
+        <!-- Shared Fields -->
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            required
+            placeholder="johndoe"
+          />
+          <label for="email">Email Address:</label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            required
+            placeholder="name@example.com"
+          />
+        </div>
+
+        <!-- Normal User Input Fields -->
+        <div id="user-fields" class="dynamic-fields active">
+          <div class="form-group">
+            <label for="firstName">First Name:</label>
+            <input
+              type="text"
+              name="firstName"
+              id="firstName"
+              placeholder="Hassan"
+            />
+            <label for="lastName">Last Name:</label>
+            <input
+              type="text"
+              name="lastName"
+              id="lastName"
+              placeholder="Ali"
+            />
+          </div>
+          <div>
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              required
+              placeholder="********"
+            />
+            <label for="confirmPassword">Confirm Password:</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              id="confirmPassword"
+              required
+              placeholder="********"
+            />
+          </div>
+        </div>
+
+        <!-- Photographer Input Fields -->
+        <div id="photographer-fields" class="dynamic-fields">
+          <div class="form-group">
+            <label for="address">Address:</label>
+            <input
+              type="text"
+              name="address"
+              id="address"
+              placeholder="123 Main St"
+            />
+          </div>
+          <label for="password">Password:</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+            placeholder="********"
+          />
+          <label for="confirmPassword">Confirm Password:</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            required
+            placeholder="********"
+          />
+        </div>
+
+        <button type="submit" class="submit-btn">Sign Up</button>
+      </form>
+    </div>
   </body>
 </html>
