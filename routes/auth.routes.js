@@ -65,9 +65,17 @@ router.post("/sign-in", async (req, res) => {
   req.session.user = {
     username: userInDatabase.username,
     _id: userInDatabase._id,
+    role: userInDatabase.role,
   };
-
-  res.redirect("/");
+  if (userInDatabase.role === "photographer") {
+    res.redirect("/photographer/dashboard");
+  }
+  if (userInDatabase.role === "admin") {
+    res.redirect("/admin/dashboard");
+  }
+  if (userInDatabase.role === "user") {
+    res.redirect("/");
+  }
 });
 
 router.get("/sign-out", (req, res) => {

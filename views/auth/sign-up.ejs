@@ -10,23 +10,22 @@
     <div class="signup-container">
       <h2>Create Your Account</h2>
 
-      <!-- Sliding Toggle Switch -->
       <div class="toggle-container" id="roleToggle">
         <div class="toggle-slider"></div>
         <button type="button" class="toggle-btn active" data-role="user">
           Normal User
         </button>
-        <button type="button" class="toggle-btn" data-role="photographer">
+        <button type="button" class="toggle-btn" data-role="user">
           Photographer
         </button>
       </div>
-
-      <!-- Main Sign Up Form -->
       <form action="/auth/sign-up" method="POST" id="signup-form">
-        <!-- Hidden input to pass the selected role to your server -->
-        <input type="hidden" name="role" id="active-role" value="user" />
-
-        <!-- Shared Fields -->
+        <input
+          type="hidden"
+          name="role"
+          id="active-role"
+          value="photographer"
+        />
         <div class="form-group">
           <label for="username">Username:</label>
           <input
@@ -61,8 +60,6 @@
             placeholder="********"
           />
         </div>
-
-        <!-- Normal User Input Fields -->
         <div id="user-fields" class="dynamic-fields active">
           <div class="form-group">
             <label for="firstName">First Name:</label>
@@ -81,8 +78,6 @@
             />
           </div>
         </div>
-
-        <!-- Photographer Input Fields -->
         <div id="photographer-fields" class="dynamic-fields">
           <div class="form-group">
             <label for="address">Address:</label>
@@ -94,7 +89,6 @@
             />
           </div>
         </div>
-
         <button type="submit" class="submit-btn">Sign Up</button>
       </form>
     </div>
