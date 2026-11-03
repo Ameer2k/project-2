@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-  </head>
-  <body>
+</head>
+<body>
     <%- include('../partials/navbar') %>
 
     <h1>All Listings</h1>
-  </body>
+
+    <% for(let oneListing of listings){ %>
+        <p>Listing at <%= oneListing.name %> by <%= oneListing.owner.username %></p>
+        <p>Package Name: <%= oneListing.name %></p>
+        <p>Description: <%= oneListing.description %></p>
+        <p>Price: $<%= oneListing.price %></p>
+        <a href="/listings/<%= oneListing._id %>">See Details</a>
+    <% } %>
+</body>
 </html>

@@ -7,6 +7,10 @@ const bcrypt = require("bcrypt");
 router.get("/sign-up", (req, res) => {
   res.render("auth/sign-up.ejs");
 });
+//profile route
+router.get("/profile", (req, res) => {
+  res.render("auth/profile.ejs");
+});
 
 router.post("/sign-up", async (req, res) => {
   const { username, email, password, confirmPassword, role } = req.body;

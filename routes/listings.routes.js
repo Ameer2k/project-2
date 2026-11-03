@@ -9,9 +9,14 @@ router.get("/new", isSignedIn, (req, res) => {
 });
 
 router.post("/", isSignedIn, async (req, res) => {
-  const {} = req.body; // Destructuring
+  const { name, description, price, image } = req.body;
+  console.log(req.body);
   const createdListing = await Listing.create({
     owner: req.session.user._id,
+    name,
+    description,
+    price,
+    image,
   });
   res.redirect("/listings");
 });
