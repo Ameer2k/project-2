@@ -29,6 +29,12 @@ router.post("/sign-up", async (req, res) => {
     if (!req.body.address) {
       return res.send("Address is required for photographers.");
     }
+    if (!req.body.businessName) {
+      return res.send("Business Name is required for photographers.");
+    }
+    if (!req.body.phoneNumber) {
+      return res.send("Phone Number is required for photographers.");
+    }
   }
   const hashedPassword = bcrypt.hashSync(password, 10);
   req.body.password = hashedPassword;
