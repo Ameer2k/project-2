@@ -76,9 +76,13 @@ router.post("/sign-in", async (req, res) => {
     username: userInDatabase.username,
     _id: userInDatabase._id,
     role: userInDatabase.role,
+    profilePicture: userInDatabase.profilePicture,
+    firstName: userInDatabase.firstName,
+    lastName: userInDatabase.lastName,
+    bio: userInDatabase.bio,
   };
   if (userInDatabase.role === "photographer") {
-    res.redirect("/photographer/dashboard");
+    res.redirect("/");
   }
   if (userInDatabase.role === "admin") {
     res.redirect("/admin/dashboard");

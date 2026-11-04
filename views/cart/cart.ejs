@@ -9,9 +9,14 @@
     <h1>My Cart</h1>
     <p>Your cart is currently empty.</p>
     <% for (let cartItem of cartItems) { %>
-      <p>Item: <%= cartItem.name %></p>
-      <p>Price: $<%= cartItem.price %></p>
-      <% const element = array[index]; %>
+      <div>
+        <img src="<%= cartItem.image %>" alt="<%= cartItem.title %>">
+        <p>Item: <%= cartItem.title %></p>
+        <p>Price: $<%= cartItem.price %></p>
+        <form action="/cart/remove/<%= cartItem._id %>" method="post">
+          <button>Remove from Cart</button>
+        </form>
+      </div>
     <% } %>
   </body>
 </html>

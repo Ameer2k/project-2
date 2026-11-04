@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <%- include('../partials/navbar') %>
+<!-- user listing -->
+<div>
+    <div>
+        <div><img src="<%= listing.image %>" alt="<%= listing.title %>"></div>
+        <p>Listing at <%= listing.title %> by <%= listing.owner.username %></p>
+        <p>Package Name: <%= listing.title %></p>
+        <p>Description: <%= listing.description %></p>
+        <p>Price: $<%= listing.price %></p>
+        <br>
+        <p>Favorited by <%= listing.favoritedByUsers.length %> People</p>
+
+        <% const isFavorited = listing.favoritedByUsers.find((oneFavoriteId)=>oneFavoriteId.equals(user._id)) %>
+    </div>
+    <div>
+        <% if(isFavorited){ %>
+            <form action="/listings/<%= listing._id %>/unfavorite" method="post">
+                <button>Unfavorite</button>
+            </form>
+        <% }else{ %>
+            <form action="/listings/<%= listing._id %>/favorite" method="post">
+                <button>Favorite</button>
+            </form>
+        <% } %>
+    </div>
+</div>
+     
+
+
+    
+</body>
+</html>

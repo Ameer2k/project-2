@@ -12,17 +12,30 @@
 
     <% for(let oneListing of listings){ %>
         <div>
-            <div>image: <img src="<%= oneListing.image %>" alt="<%= oneListing.title %>"></div>
-            <h2><%= oneListing.title %></h2>
-            <p>by <%= oneListing.owner.username %></p>
-            <p><%= oneListing.description %></p>
-            <p>Price: $<%= oneListing.price %></p>
-            <form action="/cart/add/<%= oneListing._id %>" method="post">
-                <button>add to cart</button>
-            </form>
-            <form action="/favorites/add/<%= oneListing._id %>" method="post">
-                <button>add to favorites</button>
-            </form>
+            <div>
+                image: <img src="<%= oneListing.image %>" alt="<%= oneListing.title %>">
+            </div>
+            <div>
+                <h2><%= oneListing.title %></h2>
+                <p>by <%= oneListing.owner.username %></p>
+                <p><%= oneListing.description %></p>
+                <p>Price: $<%= oneListing.price %></p>
+            </div>
+            <div>
+                <form action="/cart/add/<%= oneListing._id %>" method="post">
+                    <button>add to cart</button>
+                </form>
+                    
+                <% if(isFavorited){ %>
+                    <form action="/listings/<%= oneListing._id %>/unfavorite" method="post">
+                        <button>Unfavorite</button>
+                    </form>
+                <% }else{ %>
+                    <form action="/listings/<%= oneListing._id %>/favorite" method="post">
+                        <button>Favorite</button>
+                    </form>
+                <% } %>
+            </div>
         </div>
     <% } %>
 </body>

@@ -18,22 +18,39 @@ router.post("/", isSignedIn, async (req, res) => {
     price,
     image,
   });
-  res.redirect("/listings");
+  res.redirect("/");
 });
 
-// Read routes
-router.get("/", isSignedIn, async (req, res) => {
-  const allListings = await Listing.find().populate("owner");
-  res.render("listings/index.ejs", { listings: allListings });
+// Get all listings
+router.get("/", async (req, res) => {
+  const listings = await Listing.find().populate("owner");
+  res.render("listings/all-listings.ejs", { listings });
 });
 
-router.delete("/:listingId", isSignedIn, async (req, res) => {
-  const foundListing = await Listing.findById(req.params.listingId);
-  if (!foundListing.owner.equals(req.session.user._id)) {
+// Get a specific listing by ID
+router.get("/:id", async (req, res) => {
+  const listing = await Listing.findById(req.params.id).populate("owner");
+  res.render("listings/all-listing-detail.ejs", { listing });
+});
+
+// Delete a listing by ID
+router.delete("/:id", isSignedIn, async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing.owner.equals(req.session.user._id)) {
     return res.send("Action not allowed");
   }
-  await Listing.findByIdAndDelete(req.params.listingId);
+  await Listing.findByIdAndDelete(req.params.id);
   res.redirect("/listings");
+});
+
+// Update a listing by ID
+router.put("/:id", isSignedIn, async (req, res) => {
+  const listing = await Listing.findById(req.params.id);
+  if (!listing.owner.equals(req.session.user._id)) {
+    return res.send("Action not allowed");
+  }
+  await Listing.findByIdAndUpdate(req.params.id, req.body);
+  res.redirect(`/listings/${req.params.id}`);
 });
 
 module.exports = router;

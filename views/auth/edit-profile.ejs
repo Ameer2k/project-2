@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile</title>
+  </head>
+  <body>
+    <h1>Edit Profile</h1>
+    <form action="/update-profile" method="POST">
+      <label for="profilePicture">Profile Picture URL:</label>
+      <input
+        type="text"
+        id="profilePicture"
+        name="profilePicture"
+        value="<%= user.profilePicture %>"
+      />
+      <label for="firstName">First Name:</label>
+      <input
+        type="text"
+        id="firstName"
+        name="firstName"
+        value="<%= user.firstName %>"
+      />
+      <label for="lastName">Last Name:</label>
+      <input
+        type="text"
+        id="lastName"
+        name="lastName"
+        value="<%= user.lastName %>"
+      />
+      <label for="bio">Bio:</label>
+      <textarea id="bio" name="bio"><%= user.bio %></textarea>
+      <button type="submit">Update Profile</button>
+    </form>
+  </body>
+</html>

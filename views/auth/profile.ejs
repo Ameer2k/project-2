@@ -6,8 +6,39 @@
     <title>profile</title>
   </head>
   <body>
-    <%- include('../partials/navbar') %>
-    <h1>Profile</h1>
-    <p>Welcome, <%= user.username %>!</p>
+    <div class="profile-container">
+      <!-- when tap on the edit button go to the edit profile page -->
+      <button onclick="location.href = '/edit-profile'">Edit Profile</button>
+      <!-- profile information -->
+      <iframe
+        src="<%= user.profilePicture %>"
+        alt="Profile Picture"
+        width="200"
+        height="200"
+      ></iframe>
+      <p>Username: <%= user.username %></p>
+      <p>First Name: <%= user.firstName %></p>
+      <p>Last Name: <%= user.lastName %></p>
+      <p>post: <%= %></p>
+      <p>follow:</p>
+      <p>Bio: <%= user.bio %></p>
+    </div>
+    <div>
+      <nav>
+        <ul>
+          <li><button>Listings</button></li>
+          <li><button>Favorites</button></li>
+          <li><button>Cart</button></li>
+        </ul>
+      </nav>
+    </div>
+    <!-- Content area for dynamic views only the selected one show and switch when a button is clicked -->
+    <div>
+      <!-- show listings that the user has created if tap on listings button above -->
+
+      <!-- show user's favorited listings if tap on favorites button above -->
+
+      <!-- show user's cart items if tap on cart button above -->
+    </div>
   </body>
 </html>
