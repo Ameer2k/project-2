@@ -11,11 +11,19 @@
     <h1>All Listings</h1>
 
     <% for(let oneListing of listings){ %>
-        <p>Listing at <%= oneListing.name %> by <%= oneListing.owner.username %></p>
-        <p>Package Name: <%= oneListing.name %></p>
-        <p>Description: <%= oneListing.description %></p>
-        <p>Price: $<%= oneListing.price %></p>
-        <a href="/listings/<%= oneListing._id %>">See Details</a>
+        <div>
+            <div>image: <img src="<%= oneListing.image %>" alt="<%= oneListing.title %>"></div>
+            <h2><%= oneListing.title %></h2>
+            <p>by <%= oneListing.owner.username %></p>
+            <p><%= oneListing.description %></p>
+            <p>Price: $<%= oneListing.price %></p>
+            <form action="/cart/add/<%= oneListing._id %>" method="post">
+                <button>add to cart</button>
+            </form>
+            <form action="/favorites/add/<%= oneListing._id %>" method="post">
+                <button>add to favorites</button>
+            </form>
+        </div>
     <% } %>
 </body>
 </html>
