@@ -6,9 +6,9 @@
     <title>profile</title>
   </head>
   <body>
-    <div class="profile-container">
-      <!-- when tap on the edit button go to the edit profile page -->
-      <button onclick="location.href = '/edit-profile'">Edit Profile</button>
+    <!-- when tap on the edit button go to the edit profile page -->
+    <button onclick="location.href = '/edit-profile'">Edit Profile</button>
+    <div class="profile-container" style="display: flex">
       <!-- profile information -->
       <iframe
         src="<%= user.profilePicture %>"
