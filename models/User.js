@@ -35,6 +35,19 @@ const userSchema = new mongoose.Schema(
     phoneNumber: {
       type: Number,
     },
+    bio: {
+      type: String,
+      default: "",
+    },
+    profilePicture: {
+      type: String,
+    },
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     role: {
       type: String,
       enum: ["user", "admin", "photographer"],
