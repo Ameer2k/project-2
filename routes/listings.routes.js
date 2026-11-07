@@ -8,6 +8,23 @@ router.get("/new", checkRole("photographer"), (req, res) => {
   res.render("listings/create-listing.ejs");
 });
 
+// READ: open one package and show its photographer's information.
+router.get("/:id", async (req, res) => {
+  const listing = await Listing.findById(req.params.id).populate("owner");
+  if (!listing) return fail(res, 404, "Listing not found.");
+  res.render("listings/listing-detail.ejs", { listing });
+});
+
+// UPDATE: find your own listing and open its edit form.
+router.get("/:id/edit", async (req, res) => {
+  const listing = await Listing.findOne({
+    _id: req.params.id,
+    owner: req.session.user._id,
+  });
+  if (!listing) return fail(res, 404, "Your listing was not found.");
+  res.render("listings/listing-edit.ejs", { listing });
+});
+
 // Create a new listing as a signed-in photographer
 router.post("/", isSignedIn, async (req, res) => {
   const { title, description, price, image } = req.body;
