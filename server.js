@@ -16,7 +16,9 @@ const passUserToView = require("./middleware/pass-user-to-view.js");
 const authController = require("./routes/auth.routes.js");
 const indexController = require("./routes/index.routes.js");
 const listingsController = require("./routes/listings.routes.js");
+const blogsController = require("./routes/blogs.routes.js");
 const cartController = require("./routes/cart.routes.js");
+const profileController = require("./routes/profile.routes.js");
 
 // Middleware
 app.use(express.static("public")); // my app will serve all static files from public folder
@@ -42,11 +44,15 @@ app.use(
 );
 app.use(passUserToView);
 
-// Routes go here
+// Public routes: welcome, sign-in and sign-up.
 app.use("/auth", authController);
 app.use("/", indexController);
-app.use("/listings", listingsController);
-app.use("/cart", cartController);
+
+// Member routes: isSignedIn sends guests back to welcome.
+app.use("/listings", isSignedIn, listingsController);
+app.use("/blogs", isSignedIn, blogsController);
+app.use("/cart", isSignedIn, cartController);
+app.use("/profiles", isSignedIn, profileController);
 
 // connect to database and listen on Port 3000
 async function startServer() {

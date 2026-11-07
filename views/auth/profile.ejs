@@ -6,39 +6,196 @@
     <title>profile</title>
   </head>
   <body>
-    <!-- when tap on the edit button go to the edit profile page -->
-    <button onclick="location.href = '/edit-profile'">Edit Profile</button>
-    <div class="profile-container" style="display: flex">
-      <!-- profile information -->
-      <iframe
-        src="<%= user.profilePicture %>"
-        alt="Profile Picture"
-        width="200"
-        height="200"
-      ></iframe>
-      <p>Username: <%= user.username %></p>
-      <p>First Name: <%= user.firstName %></p>
-      <p>Last Name: <%= user.lastName %></p>
-      <p>post: <%= %></p>
-      <p>follow:</p>
-      <p>Bio: <%= user.bio %></p>
-    </div>
-    <div>
-      <nav>
-        <ul>
-          <li><button>Listings</button></li>
-          <li><button>Favorites</button></li>
-          <li><button>Cart</button></li>
-        </ul>
-      </nav>
-    </div>
-    <!-- Content area for dynamic views only the selected one show and switch when a button is clicked -->
-    <div>
-      <!-- show listings that the user has created if tap on listings button above -->
+      <header>
 
-      <!-- show user's favorited listings if tap on favorites button above -->
+        <img src="<%= profile.profilePicture %>" alt="Profile photo" />
+        
+        <div>
+        
+          <h1><%= profile.username %></h1>
+        
+          <% if (ownProfile) { %>
+            <a href="/auth/edit-profile">Edit profile</a>
+        
+            <% } else { %>
+        
+              <form action="/profiles/<%= profile._id %>/follow" method="post">
+              <button type="submit"><%= isFollowing ? 'Unfollow' : 'Follow' %></button>
+            </form>
+        
+            <% } %>
+        
+          </div>
 
-      <!-- show user's cart items if tap on cart button above -->
-    </div>
+        <div>
+        
+          <span><strong><%= listings.length + blogs.length %></strong> posts</span>
+        
+          <% if (ownProfile) { %>
+        
+            <button type="button" id="open-followers" aria-haspopup="dialog" aria-controls="followers-dialog"><strong><%= followers %></strong> followers</button>
+            <button type="button" id="open-following" aria-haspopup="dialog" aria-controls="following-dialog"><strong><%= profile.following.length %></strong> following</button>
+        
+            <% } else { %>
+        
+              <span><strong><%= followers %></strong> followers</span>
+            <span><strong><%= profile.following.length %></strong> following</span>
+        
+            <% } %>
+        
+          </div>
+        
+        <strong><%= profile.firstName %> <%= profile.lastName %></strong>
+        <p><%= profile.role %></p>
+        <p><%= profile.bio %></p>
+      </header>
+
+      <% if (ownProfile) { %>
+      
+        <dialog id="followers-dialog">
+      
+          <header>
+      
+            <h2>Followers</h2>
+            <button type="button" id="close-followers">×</button>
+      
+          </header>
+      
+          <div>
+      
+            <% if (!followerUsers.length) { %>
+              <p>No followers yet.</p>
+            <% } %>
+      
+            <% for (let person of followerUsers) { %>
+              <a href="/profiles/<%= person._id %>">
+              <img class="avatar" src="<%= person.profilePicture %>" alt="" />
+              <span><strong><%= person.username %></strong><small><%= person.firstName %> <%= person.lastName %></small></span>
+              <span>View profile</span>
+              </a>
+      
+            <% } %>
+    
+          </div>
+    
+        </dialog>
+
+        <dialog id="following-dialog">
+    
+          <header>
+            <h2>Following</h2>
+            <button type="button" id="close-following">×</button>
+          </header>
+    
+          <div>
+    
+            <% if (!followingUsers.length) { %>
+              <p>You are not following anyone yet.</p>
+            <% } %>
+    
+            <% for (let person of followingUsers) { %>
+              <a href="/profiles/<%= person._id %>">
+              <img class="avatar" src="<%= person.profilePicture %>" />
+              <span><strong><%= person.username %></strong><small><%= person.firstName %> <%= person.lastName %></small></span>
+              <span>View profile</span>
+              </a>
+            <% } %>
+    
+          </div>
+    
+        </dialog>
+    
+        <% } %>
+
+      <% 
+        let tabClass = '';
+        if (!ownProfile) {
+          tabClass = 'single-tab';
+        } else if (user.role !== 'user') {
+          tabClass = 'two-tabs';
+        }
+      %>
+
+      <div class="<%= tabClass %>" id="profile-tabs" data-active="posts">
+        <button type="button" id="show-posts">Posts</button>
+          
+        <% if (ownProfile) { %>
+            <button type="button" id="show-favorites">Favorites</button>
+          <% if (user.role === 'user') { %>
+            <button type="button" id="show-history">Cart history</button>
+          <% } %>
+        <% } %>
+     
+      </div>
+
+      <!-- Posts Panel -->
+<section id="profile-posts">
+  <% if (!listings.length && !blogs.length) { %>
+    <div><h2>No posts yet</h2><p>Your published work will appear here.</p></div>
+  <% } %>
+  <div>
+    <% for (let listing of listings) { %>
+      <%- include('../partials/profile-tile', { 
+        href: '/listings/' + listing._id, 
+        image: listing.image, 
+        title: listing.title, 
+        editPath: ownProfile ? '/listings/' + listing._id : null 
+      }) %>
+    <% } %>
+
+    <% for (let blog of blogs) { %>
+      <%- include('../partials/profile-tile', { 
+        href: '/blogs/' + blog._id, 
+        image: blog.listing ? blog.listing.image : null, 
+        title: blog.title, 
+        editPath: ownProfile ? '/blogs/' + blog._id : null 
+      }) %>
+    <% } %>
+  </div>
+</section>
+
+      <% if (ownProfile) { %>
+
+        <section id="profile-favorites" hidden>
+          <% if (!favorites.length && !favoriteBlogs.length) { %>
+            <div><h2>Save what inspires you</h2><p>Your favorite posts will appear here.</p></div>
+          <% } %>
+
+          <div>
+
+            <% for (let listing of favorites) { %>
+              <%- include('../partials/profile-tile', { href: '/listings/' + listing._id, image: listing.image, title: listing.title, saveAction: '/listings/' + listing._id + '/favorite' }) %>
+            <% } %>
+
+            <% for (let blog of favoriteBlogs) { %>
+              <%- include('../partials/profile-tile', { href: '/blogs/' + blog._id, image: blog.listing ? blog.listing.image : null, title: blog.title, saveAction: '/blogs/' + blog._id + '/favorite' }) %>
+            <% } %>
+
+          </div>
+
+        </section>
+
+        <% if (user.role === 'user') { %>
+
+          <section id="profile-history" hidden>
+
+            <% if (!orders.length) { %>
+              <div><h2>No orders yet</h2><p>Completed demo orders will appear here.</p><a href="/cart">Open your cart</a></div>
+            <% } %>
+
+            <% for (let order of orders) { %>
+
+              <article>
+
+                <% for (let item of order.items) { %>
+                  <div><img src="<%= item.image %>" /><span><%= item.title %></span><strong>$<%= item.price %></strong></div>
+                <% } %>
+
+              </article>
+            <% } %>
+
+          </section>
+        <% } %>
+      <% } %>
   </body>
 </html>
