@@ -14,21 +14,21 @@
           <p>Photographer: <a href="/profiles/<%= listing.owner._id %>"><%= listing.owner.username %></a></p>
         <% } %>
 
-        <p>Saved by <%= listing.favBy.length %> members.</p>
+        <p>Saved by <%= listing.favBy.length %> members</p>
 
         <!-- here i should complete the favorte from when i add the route for now just the form without action -->
-        <form action="" method="post">
+        <form action="/listings/<%= listing._id %>/favorite" method="post">
 
-          <input type="" name="" />
-          <button type="submit"></button>
+          <input ttype="hidden" name="back" value="/listings/<%= listing._id %>" />
+          <button type="submit"><%= listing.favBy.includes(user._id) ? 'Remove favorite' : 'Add favorite' %>></button>
 
         </form>
 
         <!-- here i should complete the add to cart from when i add the route for now just the form without action -->
         <% if (user.role === 'user') { %>
-          <form action="" method="post">
+          <form data-image="<%= listing.image %>" action="/cart/add/<%= listing._id %>" method="post">
 
-            <input type="" name="" />
+            <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
             <button type="submit">Add to cart</button>
 
           </form>
