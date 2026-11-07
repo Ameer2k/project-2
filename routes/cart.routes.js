@@ -1,6 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const User = require("../models/Cart.js");
+const router = require("express").Router();
+const Cart = require("../models/Cart");
+const Listing = require("../models/Listing");
+const Order = require("../models/Order");
+const checkRole = require("../middleware/check-role");
 
 // Get the cart for the signed-in user
 router.get("/", async (req, res) => {
