@@ -22,7 +22,7 @@ router.post("/", checkRole("photographer"), async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const listing = await Listing.findById(req.params.id).populate("owner");
-  if (!listing) return fail(res, "Listing not found.");
+  if (!listing) return "Listing not found.";
   res.render("listings/listing-detail.ejs", { listing });
 });
 
@@ -31,28 +31,27 @@ router.get("/:id/edit", async (req, res) => {
     _id: req.params.id,
     owner: req.session.user._id,
   });
-  if (!listing) return fail(res, 404, "Your listing was not found.");
+  if (!listing) return "Your listing was not found.";
   res.render("listings/listing-edit.ejs", { listing });
 });
 
-// Delete a listing by ID
-router.delete("/:id", isSignedIn, async (req, res) => {
-  const listing = await Listing.findById(req.params.id);
-  if (!listing.owner.equals(req.session.user._id)) {
-    return res.send("Action not allowed");
-  }
-  await Listing.findByIdAndDelete(req.params.id);
-  res.redirect("/listings");
+router.delete("/:id", async (req, res) => {
+  const listing = await Listing.findOneAndDelete({
+    _id: req.params.id,
+    owner: req.session.user._id,
+  });
+
+  if (!listing) return "Your listing was not found.";
+  await Cart.updateMany({}, { $pull: { listings: listing._id } });
+  await Blog.updateMany({ listing: listing._id }, { $set: { listing: null } });
+  res.redirect("/auth/profile");
 });
 
-// Update a listing by ID
-router.put("/:id", isSignedIn, async (req, res) => {
-  const listing = await Listing.findById(req.params.id);
-  if (!listing.owner.equals(req.session.user._id)) {
-    return res.send("Action not allowed");
-  }
-  await Listing.findByIdAndUpdate(req.params.id, req.body);
-  res.redirect(`/listings/${req.params.id}`);
+router.post("/:id/favorite", async (req, res) => {
+  if (!(await Listing.exists({ _id: req.params.id })))
+    return "Listing not found.";
+  await (Listing, req.params.id, "favBy", req.session.user._id);
+  res.redirect((req, "/#listings"));
 });
 
 module.exports = router;
