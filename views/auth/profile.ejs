@@ -33,8 +33,8 @@
         
           <% if (ownProfile) { %>
         
-            <button type="button" id="open-followers" aria-haspopup="dialog" aria-controls="followers-dialog"><strong><%= followers %></strong> followers</button>
-            <button type="button" id="open-following" aria-haspopup="dialog" aria-controls="following-dialog"><strong><%= profile.following.length %></strong> following</button>
+            <button type="button" id="open-followers"><strong><%= followers %></strong> followers</button>
+            <button type="button" id="open-following"><strong><%= profile.following.length %></strong> following</button>
         
             <% } else { %>
         
@@ -128,52 +128,122 @@
      
       </div>
 
-      <!-- Posts Panel -->
-<section id="profile-posts">
-  <% if (!listings.length && !blogs.length) { %>
-    <div><h2>No posts yet</h2><p>Your published work will appear here.</p></div>
-  <% } %>
-  <div>
-    <% for (let listing of listings) { %>
-      <%- include('../partials/profile-tile', { 
-        href: '/listings/' + listing._id, 
-        image: listing.image, 
-        title: listing.title, 
-        editPath: ownProfile ? '/listings/' + listing._id : null 
-      }) %>
-    <% } %>
+      <section id="profile-posts">
+        <% if (!listings.length && !blogs.length) { %>
+          <div><h2>No posts yet</h2><p>Your published work will appear here.</p></div>
+        <% } %>
+        <div>
+          
+          <!-- Listings Loop Inline -->
+          <% for (let listing of listings) { %>
+            <article>
+              <a href="/listings/<%= listing._id %>">
+                <% if (listing.image) { %>
+                  <img src="<%= listing.image %>" />
+                <% } else { %>
+                  <div>
+                    <span>JOURNAL</span>
+                    <h2><%= listing.title %></h2>
+                  </div>
+                <% } %>
+                <h3><%= listing.title %></h3>
+              </a>
 
-    <% for (let blog of blogs) { %>
-      <%- include('../partials/profile-tile', { 
-        href: '/blogs/' + blog._id, 
-        image: blog.listing ? blog.listing.image : null, 
-        title: blog.title, 
-        editPath: ownProfile ? '/blogs/' + blog._id : null 
-      }) %>
-    <% } %>
-  </div>
-</section>
+              <% if (ownProfile) { %>
+                <div>
+                  <a href="/listings/<%= listing._id %>/edit">Edit</a>
+                  <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
+                    <button type="submit">Delete</button>
+                  </form>
+                </div>
+              <% } %>
+            </article>
+          <% } %>
+
+          <% for (let blog of blogs) { %>
+            <article>
+              <a href="/blogs/<%= blog._id %>">
+                <% if (blog.listing ? blog.listing.image : null) { %>
+                  <img src="<%= blog.listing.image %>" alt="<%= blog.title %>" />
+                <% } else { %>
+                  <div>
+                    <span>JOURNAL</span>
+                    <h2><%= blog.title %></h2>
+                  </div>
+                <% } %>
+                <h3><%= blog.title %></h3>
+              </a>
+
+              <% if (ownProfile) { %>
+                <div>
+                  <a href="/blogs/<%= blog._id %>/edit">Edit</a>
+                  <form action="/blogs/<%= blog._id %>?_method=DELETE" method="post">
+                    <button type="submit">Delete</button>
+                  </form>
+                </div>
+              <% } %>
+            </article>
+          <% } %>
+
+        </div>
+      </section>
+
 
       <% if (ownProfile) { %>
 
-        <section id="profile-favorites" hidden>
-          <% if (!favorites.length && !favoriteBlogs.length) { %>
-            <div><h2>Save what inspires you</h2><p>Your favorite posts will appear here.</p></div>
+      <section id="profile-favorites" hidden>
+        <% if (!favorites.length && !favoriteBlogs.length) { %>
+          <div><h2>Save what inspires you</h2><p>Your favorite posts will appear here.</p></div>
+        <% } %>
+        
+        <div>
+
+          <% for (let listing of favorites) { %>
+            <article>
+              <a href="/listings/<%= listing._id %>">
+                <% if (listing.image) { %>
+                  <img src="<%= listing.image %>" alt="<%= listing.title %>" />
+                <% } else { %>
+                  <div>
+                    <span>JOURNAL</span>
+                    <h2><%= listing.title %></h2>
+                  </div>
+                <% } %>
+                <h3><%= listing.title %></h3>
+              </a>
+
+              <form action="/listings/<%= listing._id %>/favorite" method="post">
+                <input type="hidden" name="back" value="/auth/profile#favorites" />
+                <button type="submit" aria-label="Remove from favorites">♥</button>
+              </form>
+            </article>
           <% } %>
 
-          <div>
+          <% for (let blog of favoriteBlogs) { %>
+            <article>
+              <a href="/blogs/<%= blog._id %>">
+                <% if (blog.listing ? blog.listing.image : null) { %>
+                  <img src="<%= blog.listing.image %>" alt="<%= blog.title %>" />
+                <% } else { %>
+                  <div>
+                    <span>JOURNAL</span>
+                    <h2><%= blog.title %></h2>
+                  </div>
+                <% } %>
+                <h3><%= blog.title %></h3>
+              </a>
 
-            <% for (let listing of favorites) { %>
-              <%- include('../partials/profile-tile', { href: '/listings/' + listing._id, image: listing.image, title: listing.title, saveAction: '/listings/' + listing._id + '/favorite' }) %>
-            <% } %>
+              <form action="/blogs/<%= blog._id %>/favorite" method="post">
+                <input type="hidden" name="back" value="/auth/profile#favorites" />
+                <button type="submit" aria-label="Remove from favorites">♥</button>
+              </form>
 
-            <% for (let blog of favoriteBlogs) { %>
-              <%- include('../partials/profile-tile', { href: '/blogs/' + blog._id, image: blog.listing ? blog.listing.image : null, title: blog.title, saveAction: '/blogs/' + blog._id + '/favorite' }) %>
-            <% } %>
+            </article>
+          <% } %>
+        </div>
+      </section>
 
-          </div>
 
-        </section>
 
         <% if (user.role === 'user') { %>
 

@@ -20,11 +20,11 @@ router.post("/", checkRole("user"), async (req, res) => {
     listing: listing._id,
     owner: req.session.user._id,
   });
-  res.redirect("/#blogs");
+  res.redirect("/blogs");
 });
 
 router.get("/", (req, res) => {
-  res.redirect("/#blogs");
+  res.redirect("/blogs");
 });
 
 router.get("/:id", async (req, res) => {
@@ -66,7 +66,7 @@ router.delete("/:id", async (req, res) => {
 router.post("/:id/favorite", async (req, res) => {
   if (!(await Blog.exists({ _id: req.params.id }))) return "Blog not found.";
   await (Blog, req.params.id, "favBy", req.session.user._id);
-  res.redirect("/#blogs");
+  res.redirect("/blogs");
 });
 
 module.exports = router;
