@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const isSignedIn = require("../middleware/is-signed-in");
 const Listing = require("../models/Listing");
+const Cart = require("../models/Cart");
+const Blog = require("../models/Blog");
+const checkRole = require("../middleware/check-role");
 
-// Create routes
-router.get("/new", isSignedIn, (req, res) => {
+router.get("/new", checkRole("photographer"), (req, res) => {
   res.render("listings/create-listing.ejs");
 });
 

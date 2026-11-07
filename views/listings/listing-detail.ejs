@@ -6,35 +6,45 @@
     <title>Document</title>
 </head>
 <body>
-    <%- include('../partials/navbar') %>
-<!-- user listing to show on his page-->
-<div>
-    <div>
-        <div><img src="<%= listing.image %>" alt="<%= listing.title %>"></div>
-        <p>Listing at <%= listing.title %> by <%= listing.owner.username %></p>
-        <p>Package Name: <%= listing.title %></p>
-        <p>Description: <%= listing.description %></p>
-        <p>Price: $<%= listing.price %></p>
-        <br>
-        <p>Favorited by <%= listing.favoritedByUsers.length %> People</p>
-
-        <% const isFavorited = listing.favoritedByUsers.find((oneFavoriteId)=>oneFavoriteId.equals(user._id)) %>
-    </div>
-    <div>
-        <% if(isFavorited){ %>
-            <form action="/listings/<%= listing._id %>/unfavorite" method="post">
-                <button>Unfavorite</button>
-            </form>
-        <% }else{ %>
-            <form action="/listings/<%= listing._id %>/favorite" method="post">
-                <button>Favorite</button>
-            </form>
+    <h1><%= listing.title %></h1>
+      <article>
+        <p><%= listing.description %></p>
+        <p>$<%= listing.price %></p>
+        <% if (listing.owner) { %>
+          <p>Photographer: <a href="/profiles/<%= listing.owner._id %>"><%= listing.owner.username %></a></p>
         <% } %>
-    </div>
-</div>
-     
 
+        <p>Saved by <%= listing.favBy.length %> members.</p>
 
+        <!-- here i should complete the favorte from when i add the route for now just the form without action -->
+        <form action="" method="post">
+
+          <input type="" name="" />
+          <button type="submit"></button>
+
+        </form>
+
+        <!-- here i should complete the add to cart from when i add the route for now just the form without action -->
+        <% if (user.role === 'user') { %>
+          <form action="" method="post">
+
+            <input type="" name="" />
+            <button type="submit">Add to cart</button>
+
+          </form>
+        <% } %>
+
+        <% if (listing.owner && listing.owner._id.equals(user._id)) { %>
+
+          <a href="/listings/<%= listing._id %>/edit">Edit listing</a>
+
+          <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
+            <button type="submit">Delete listing</button>
+          </form>
+        <% } %>
+      </article>
+      
+      <a href="/">Back to home</a>
     
 </body>
 </html>
