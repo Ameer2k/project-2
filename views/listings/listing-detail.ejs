@@ -1,50 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listing Detail</title>
-</head>
-<body>
-    <h1><%= listing.title %></h1>
-      <article>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Listing details</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/app.js" defer></script>
+  </head>
+  <body class="<%= user ? 'member-page' : 'guest-page' %>">
+        <%- include('../partials/navbar', { page: 'other' }) %>
+    <main>
+      <h1><%= listing.title %></h1>
+            <article class="post">
+        <% const mediaFiles = listing.media && listing.media.length ? listing.media : [{ url: listing.image, type: 'image' }]; %>
+        <div class="listing-media" data-index="0" role="group" aria-label="Listing photos and videos">
+          <div class="media-stage">
+            <% mediaFiles.forEach((file, index) => { %>
+              <div class="media-slide" <%= index > 0 ? 'hidden' : '' %>>
+                <% if (file.type === 'video') { %>
+                  <video src="<%= file.url %>" controls preload="metadata"></video>
+                <% } else { %>
+                  <img class="post-image" src="<%= file.url %>" alt="<%= listing.title %> photo <%= index + 1 %>" />
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+          <% if (mediaFiles.length > 1) { %>
+            <div class="media-controls">
+              <button class="media-prev" type="button" aria-label="Previous photo or video">‹</button>
+              <span class="media-count" aria-live="polite">1 / <%= mediaFiles.length %></span>
+              <button class="media-next" type="button" aria-label="Next photo or video">›</button>
+            </div>
+          <% } %>
+        </div>
         <p><%= listing.description %></p>
-        <p>$<%= listing.price %></p>
+        <p class="price">$<%= listing.price.toFixed(2) %></p>
         <% if (listing.owner) { %>
           <p>Photographer: <a href="/profiles/<%= listing.owner._id %>"><%= listing.owner.username %></a></p>
         <% } %>
+        <p>Saved by <%= listing.favBy.length %> members.</p>
 
-        <p>Saved by <%= listing.favBy.length %> members</p>
-
-        <!-- here i should complete the favorte from when i add the route for now just the form without action -->
-        <form action="/listings/<%= listing._id %>/favorite" method="post">
-
-          <input ttype="hidden" name="back" value="/listings/<%= listing._id %>" />
+                <form action="/listings/<%= listing._id %>/favorite" method="post">
+          <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
           <button type="submit"><%= listing.favBy.some(id => id.equals(user._id)) ? 'Remove favorite' : 'Add favorite' %></button>
-
         </form>
-
-        <!-- here i should complete the add to cart from when i add the route for now just the form without action -->
         <% if (user.role === 'user') { %>
-          <form data-image="<%= listing.image %>" action="/cart/add/<%= listing._id %>" method="post">
-
-            <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
+          <form class="add-to-cart" action="/cart/add/<%= listing._id %>" method="post">
+              <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
             <button type="submit">Add to cart</button>
-
           </form>
         <% } %>
 
-        <% if (listing.owner && listing.owner._id.equals(user._id)) { %>
-
-          <a href="/listings/<%= listing._id %>/edit">Edit listing</a>
-
+                <% if (listing.owner && listing.owner._id.equals(user._id)) { %>
+          <button><a href="/listings/<%= listing._id %>/edit">Edit listing</a></button>
           <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
             <button type="submit">Delete listing</button>
           </form>
         <% } %>
       </article>
-      
       <a href="/">Back to home</a>
-    
-</body>
+    </main>
+  </body>
 </html>

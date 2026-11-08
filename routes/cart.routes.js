@@ -11,34 +11,18 @@ router.get("/", async (req, res) => {
     "listings",
   );
   const cartItems = cart ? cart.listings : [];
-
   res.render("cart/cart.ejs", { cartItems });
 });
 
 router.post("/add/:listingId", async (req, res) => {
   const listing = await Listing.findById(req.params.listingId);
-  const wantsJSON = req.get("Accept") === "application/json";
-  if (!listing) {
-    if (wantsJSON)
-      return res.json({
-        success: false,
-        message: "This listing is no longer available.",
-      });
-    return res.send("Listing not found.");
-  }
-
-  await Cart.findOneAndUpdate(
+  if (!listing) return res.send("Listing not found.");
+  await Cart.updateOne(
     { owner: req.session.user._id },
-    { $addToSet: { listings: listing._id } },
-    { upsert: true, setDefaultsOnInsert: true },
+    { $addToSet: { listings: listing._id } }, // addToSet prevents duplicate packages.
+    { upsert: true },
   );
-  if (wantsJSON) return res.json({ success: true, message: "Added to cart." });
-  const back = req.body.back;
-  res.redirect(
-    typeof back === "string" && back.startsWith("/") && !back.startsWith("//")
-      ? back
-      : "/cart",
-  );
+  res.redirect("/cart");
 });
 
 router.delete("/remove/:listingId", async (req, res) => {
@@ -50,9 +34,10 @@ router.delete("/remove/:listingId", async (req, res) => {
 });
 
 router.post("/checkout", async (req, res) => {
-  const cart = await Cart.findOne({
-    owner: req.session.user._id,
-  }).populate({ path: "listings", populate: { path: "owner" } });
+  const cart = await Cart.findOne({ owner: req.session.user._id }).populate({
+    path: "listings",
+    populate: { path: "owner" },
+  });
   if (!cart || !cart.listings.length) return res.redirect("/cart");
 
   const items = cart.listings.map((listing) => ({
@@ -63,9 +48,20 @@ router.post("/checkout", async (req, res) => {
   }));
   const total = items.reduce((sum, item) => sum + item.price, 0);
 
-  await Order.create({ owner: req.session.user._id, items, total });
+  try {
+    await Order.create({ owner: req.session.user._id, items, total });
+  } catch (error) {
+    await Cart.updateOne(
+      { owner: req.session.user._id },
+      {
+        $setOnInsert: { listings: cart.listings.map((listing) => listing._id) },
+      },
+      { upsert: true },
+    );
+    throw error;
+  }
   await Cart.deleteOne({ _id: cart._id });
-  res.redirect("/auth/profile#history");
+  res.redirect("/auth/profile"); // Cart history is on your profile.
 });
 
 module.exports = router;

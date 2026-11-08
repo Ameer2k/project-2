@@ -3,269 +3,195 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>profile</title>
+    <title><%= profile.username %> · Frame</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/app.js" defer></script>
   </head>
-  <body>
-      <header>
+  <body class="member-page">
+    <%- include('../partials/navbar', { page: 'other' }) %>
 
-        <img src="<%= profile.profilePicture %>" alt="Profile photo" />
-        
-        <div>
-        
-          <h1><%= profile.username %></h1>
-        
-          <% if (ownProfile) { %>
-            <a href="/profiles/me/edit">Edit profile</a>
-        
+    <main class="profile-page">
+            <header class="profile-header">
+        <img class="profile-photo" src="<%= profile.profilePicture %>" alt="<%= profile.username %>'s profile photo" />
+        <div class="profile-info">
+          <div class="profile-name-row">
+            <h1><%= profile.username %></h1>
+                        <% if (ownProfile) { %>
+              <a class="edit-profile" href="/auth/edit-profile">Edit profile <span aria-hidden="true">✎</span></a>
             <% } else { %>
-        
               <form action="/profiles/<%= profile._id %>/follow" method="post">
-              <button type="submit"><%= isFollowing ? 'Unfollow' : 'Follow' %></button>
-            </form>
-        
+                <button type="submit"><%= isFollowing ? 'Unfollow' : 'Follow' %></button>
+              </form>
             <% } %>
-        
           </div>
 
-        <div>
-        
-          <span><strong><%= listings.length + blogs.length %></strong> posts</span>
-        
-          <% if (ownProfile) { %>
-        
-            <button type="button" id="open-followers"><strong><%= followers %></strong> followers</button>
-            <button type="button" id="open-following"><strong><%= profile.following.length %></strong> following</button>
-        
+          <div class="profile-stats">
+            <span><strong><%= listings.length + blogs.length %></strong> posts</span>
+            <% if (ownProfile) { %>
+                            <button type="button" id="open-followers" aria-haspopup="dialog" aria-controls="followers-dialog"><strong><%= followers %></strong> followers</button>
+              <button type="button" id="open-following" aria-haspopup="dialog" aria-controls="following-dialog"><strong><%= profile.following.length %></strong> following</button>
             <% } else { %>
-        
-              <span><strong><%= followers %></strong> followers</span>
-            <span><strong><%= profile.following.length %></strong> following</span>
-        
+                            <span><strong><%= followers %></strong> followers</span>
+              <span><strong><%= profile.following.length %></strong> following</span>
             <% } %>
-        
           </div>
-        
-        <strong><%= profile.firstName %> <%= profile.lastName %></strong>
-        <p><%= profile.role %></p>
-        <p><%= profile.bio %></p>
+          <strong class="profile-full-name"><%= profile.firstName %> <%= profile.lastName %></strong>
+          <p class="profile-role"><%= profile.role %></p>
+          <p class="profile-bio"><%= profile.bio %></p>
+        </div>
       </header>
 
       <% if (ownProfile) { %>
-      
-        <dialog id="followers-dialog">
-      
-          <header>
-      
-            <h2>Followers</h2>
-            <button type="button" id="close-followers">×</button>
-      
+                <dialog class="people-dialog" id="followers-dialog" aria-labelledby="followers-title">
+          <header class="people-heading">
+            <h2 id="followers-title">Followers</h2>
+            <button type="button" id="close-followers" aria-label="Close followers">×</button>
           </header>
-      
-          <div>
-      
+          <div class="people-list">
             <% if (!followerUsers.length) { %>
-              <p>No followers yet.</p>
+              <p class="people-empty">No followers yet.</p>
             <% } %>
-      
             <% for (let person of followerUsers) { %>
-              <a href="/profiles/<%= person._id %>">
-              <img class="avatar" src="<%= person.profilePicture %>" alt="" />
-              <span><strong><%= person.username %></strong><small><%= person.firstName %> <%= person.lastName %></small></span>
-              <span>View profile</span>
+              <a class="people-row" href="/profiles/<%= person._id %>">
+                <img class="avatar" src="<%= person.profilePicture %>" alt="" />
+                <span><strong><%= person.username %></strong><small><%= person.firstName %> <%= person.lastName %></small></span>
+                <span class="view-person">View profile</span>
               </a>
-      
             <% } %>
-    
           </div>
-    
         </dialog>
 
-        <dialog id="following-dialog">
-    
-          <header>
-            <h2>Following</h2>
-            <button type="button" id="close-following">×</button>
+        <dialog class="people-dialog" id="following-dialog" aria-labelledby="following-title">
+          <header class="people-heading">
+            <h2 id="following-title">Following</h2>
+            <button type="button" id="close-following" aria-label="Close following">×</button>
           </header>
-    
-          <div>
-    
+          <div class="people-list">
             <% if (!followingUsers.length) { %>
-              <p>You are not following anyone yet.</p>
+              <p class="people-empty">You are not following anyone yet.</p>
             <% } %>
-    
             <% for (let person of followingUsers) { %>
-              <a href="/profiles/<%= person._id %>">
-              <img class="avatar" src="<%= person.profilePicture %>" />
-              <span><strong><%= person.username %></strong><small><%= person.firstName %> <%= person.lastName %></small></span>
-              <span>View profile</span>
+              <a class="people-row" href="/profiles/<%= person._id %>">
+                <img class="avatar" src="<%= person.profilePicture %>" alt="" />
+                <span><strong><%= person.username %></strong><small><%= person.firstName %> <%= person.lastName %></small></span>
+                <span class="view-person">View profile</span>
               </a>
             <% } %>
-    
           </div>
-    
         </dialog>
-    
-        <% } %>
+      <% } %>
 
-      <% 
-        let tabClass = '';
-        if (!ownProfile) {
-          tabClass = 'single-tab';
-        } else if (user.role !== 'user') {
-          tabClass = 'two-tabs';
-        }
-      %>
-
-      <div class="<%= tabClass %>" id="profile-tabs" data-active="posts">
-        <button type="button" id="show-posts">Posts</button>
-          
+            <div id="profile-tabs" data-active="posts" role="tablist" aria-label="Profile sections">
+        <button type="button" id="show-posts" role="tab" aria-selected="true" aria-controls="profile-posts">Posts</button>
         <% if (ownProfile) { %>
-            <button type="button" id="show-favorites">Favorites</button>
+          <button type="button" id="show-favorites" role="tab" aria-selected="false" aria-controls="profile-favorites">Favorites</button>
           <% if (user.role === 'user') { %>
-            <button type="button" id="show-history">Cart history</button>
+          <button type="button" id="show-history" role="tab" aria-selected="false" aria-controls="profile-history">Cart history</button>
           <% } %>
         <% } %>
-     
       </div>
 
-      <section id="profile-posts">
+            <section id="profile-posts" role="tabpanel" aria-labelledby="show-posts">
         <% if (!listings.length && !blogs.length) { %>
-          <div><h2>No posts yet</h2><p>Your published work will appear here.</p></div>
+          <div class="empty-state"><span aria-hidden="true">◎</span><h2>No posts yet</h2><p>Your published work will appear here.</p></div>
         <% } %>
-        <div>
-          
-          <!-- Listings Loop Inline -->
-          <% for (let listing of listings) { %>
-            <article>
-              <a href="/listings/<%= listing._id %>">
-                <% if (listing.image) { %>
-                  <img src="<%= listing.image %>" />
-                <% } else { %>
-                  <div>
-                    <span>JOURNAL</span>
-                    <h2><%= listing.title %></h2>
-                  </div>
-                <% } %>
-                <h3><%= listing.title %></h3>
-              </a>
-
-              <% if (ownProfile) { %>
-                <div>
-                  <a href="/listings/<%= listing._id %>/edit">Edit</a>
-                  <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
-                    <button type="submit">Delete</button>
-                  </form>
-                </div>
-              <% } %>
-            </article>
-          <% } %>
-
-          <% for (let blog of blogs) { %>
-            <article>
-              <a href="/blogs/<%= blog._id %>">
-                <% if (blog.listing ? blog.listing.image : null) { %>
-                  <img src="<%= blog.listing.image %>" alt="<%= blog.title %>" />
-                <% } else { %>
-                  <div>
-                    <span>JOURNAL</span>
-                    <h2><%= blog.title %></h2>
-                  </div>
-                <% } %>
-                <h3><%= blog.title %></h3>
-              </a>
-
-              <% if (ownProfile) { %>
-                <div>
-                  <a href="/blogs/<%= blog._id %>/edit">Edit</a>
-                  <form action="/blogs/<%= blog._id %>?_method=DELETE" method="post">
-                    <button type="submit">Delete</button>
-                  </form>
-                </div>
-              <% } %>
-            </article>
-          <% } %>
-
-        </div>
-      </section>
-
-
-      <% if (ownProfile) { %>
-
-      <section id="profile-favorites" hidden>
-        <% if (!favorites.length && !favoriteBlogs.length) { %>
-          <div><h2>Save what inspires you</h2><p>Your favorite posts will appear here.</p></div>
-        <% } %>
-        
-        <div>
-
-          <% for (let listing of favorites) { %>
-            <article>
-              <a href="/listings/<%= listing._id %>">
+        <div class="profile-grid">
+                    <% for (let listing of listings) { %>
+            <article class="profile-tile">
+              <a class="tile-open" href="/listings/<%= listing._id %>">
                 <% if (listing.image) { %>
                   <img src="<%= listing.image %>" alt="<%= listing.title %>" />
                 <% } else { %>
-                  <div>
-                    <span>JOURNAL</span>
-                    <h2><%= listing.title %></h2>
-                  </div>
+                  <div class="text-tile"><span>JOURNAL</span><h2><%= listing.title %></h2></div>
                 <% } %>
-                <h3><%= listing.title %></h3>
+                <span class="tile-title"><%= listing.title %></span>
               </a>
-
-              <form action="/listings/<%= listing._id %>/favorite" method="post">
-                <input type="hidden" name="back" value="/auth/profile#favorites" />
-                <button type="submit" aria-label="Remove from favorites">♥</button>
-              </form>
+              <% if (ownProfile) { %>
+                <div class="tile-actions">
+                  <a href="/listings/<%= listing._id %>/edit">Edit</a>
+                  <form action="/listings/<%= listing._id %>?_method=DELETE" method="post"><button type="submit">Delete</button></form>
+                </div>
+              <% } %>
             </article>
           <% } %>
-
-          <% for (let blog of favoriteBlogs) { %>
-            <article>
-              <a href="/blogs/<%= blog._id %>">
-                <% if (blog.listing ? blog.listing.image : null) { %>
+                    <% for (let blog of blogs) { %>
+            <article class="profile-tile">
+              <a class="tile-open" href="/blogs/<%= blog._id %>">
+                <% if (blog.listing && blog.listing.image) { %>
                   <img src="<%= blog.listing.image %>" alt="<%= blog.title %>" />
                 <% } else { %>
-                  <div>
-                    <span>JOURNAL</span>
-                    <h2><%= blog.title %></h2>
-                  </div>
+                  <div class="text-tile"><span>JOURNAL</span><h2><%= blog.title %></h2></div>
                 <% } %>
-                <h3><%= blog.title %></h3>
+                <span class="tile-title"><%= blog.title %></span>
               </a>
-
-              <form action="/blogs/<%= blog._id %>/favorite" method="post">
-                <input type="hidden" name="back" value="/auth/profile#favorites" />
-                <button type="submit" aria-label="Remove from favorites">♥</button>
-              </form>
-
+              <% if (ownProfile) { %>
+                <div class="tile-actions">
+                  <a href="/blogs/<%= blog._id %>/edit">Edit</a>
+                  <form action="/blogs/<%= blog._id %>?_method=DELETE" method="post"><button type="submit">Delete</button></form>
+                </div>
+              <% } %>
             </article>
           <% } %>
         </div>
       </section>
 
-
-
-        <% if (user.role === 'user') { %>
-
-          <section id="profile-history" hidden>
-
-            <% if (!orders.length) { %>
-              <div><h2>No orders yet</h2><p>Completed demo orders will appear here.</p><a href="/cart">Open your cart</a></div>
-            <% } %>
-
-            <% for (let order of orders) { %>
-
-              <article>
-
-                <% for (let item of order.items) { %>
-                  <div><img src="<%= item.image %>" /><span><%= item.title %></span><strong>$<%= item.price %></strong></div>
-                <% } %>
-
+      <% if (ownProfile) { %>
+                <section id="profile-favorites" role="tabpanel" aria-labelledby="show-favorites" hidden>
+          <% if (!favorites.length && !favoriteBlogs.length) { %>
+            <div class="empty-state"><span aria-hidden="true">♡</span><h2>Save what inspires you</h2><p>Your favorite posts will appear here.</p></div>
+          <% } %>
+          <div class="profile-grid">
+            <% for (let listing of favorites) { %>
+              <article class="profile-tile">
+                <a class="tile-open" href="/listings/<%= listing._id %>">
+                  <% if (listing.image) { %>
+                    <img src="<%= listing.image %>" alt="<%= listing.title %>" />
+                  <% } else { %>
+                    <div class="text-tile"><span>JOURNAL</span><h2><%= listing.title %></h2></div>
+                  <% } %>
+                  <span class="tile-title"><%= listing.title %></span>
+                </a>
+                <form class="tile-save" action="/listings/<%= listing._id %>/favorite" method="post">
+                  <input type="hidden" name="back" value="/profiles/<%= profile._id %>#favorites" />
+                  <button type="submit" aria-label="Remove from favorites">♥</button>
+                </form>
               </article>
             <% } %>
+            <% for (let blog of favoriteBlogs) { %>
+              <article class="profile-tile">
+                <a class="tile-open" href="/blogs/<%= blog._id %>">
+                  <% if (blog.listing && blog.listing.image) { %>
+                    <img src="<%= blog.listing.image %>" alt="<%= blog.title %>" />
+                  <% } else { %>
+                    <div class="text-tile"><span>JOURNAL</span><h2><%= blog.title %></h2></div>
+                  <% } %>
+                  <span class="tile-title"><%= blog.title %></span>
+                </a>
+                <form class="tile-save" action="/blogs/<%= blog._id %>/favorite" method="post">
+                  <input type="hidden" name="back" value="/profiles/<%= profile._id %>#favorites" />
+                  <button type="submit" aria-label="Remove from favorites">♥</button>
+                </form>
+              </article>
+            <% } %>
+          </div>
+        </section>
 
-          </section>
+        <% if (user.role === 'user') { %>
+                <section id="profile-history" role="tabpanel" aria-labelledby="show-history" hidden>
+          <% if (!orders.length) { %>
+            <div class="empty-state"><span aria-hidden="true">◷</span><h2>No orders yet</h2><p>Completed will appear here.</p><a href="/cart">Open your cart</a></div>
+          <% } %>
+          <% for (let order of orders) { %>
+            <article class="order-card">
+              <header><h2><%= order.createdAt.toLocaleDateString() %></h2><strong>$<%= order.total.toFixed(2) %></strong></header>
+              <% for (let item of order.items) { %>
+                <div class="order-item"><img src="<%= item.image %>" alt="" /><span><%= item.title %></span><strong>$<%= item.price.toFixed(2) %></strong></div>
+              <% } %>
+            </article>
+          <% } %>
+        </section>
         <% } %>
       <% } %>
+    </main>
   </body>
 </html>

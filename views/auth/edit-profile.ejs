@@ -4,34 +4,42 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Profile</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/app.js" defer></script>
   </head>
-  <body>
-    <h1>Edit Profile</h1>
-    <form action="/profiles/me?_method=PUT" method="POST">
-      <label for="profilePicture">Profile Picture URL:</label>
-      <input
-        type="text"
-        id="profilePicture"
-        name="profilePicture"
-        value="<%= user.profilePicture %>"
-      />
-      <label for="firstName">First Name:</label>
-      <input
-        type="text"
-        id="firstName"
-        name="firstName"
-        value="<%= user.firstName %>"
-      />
-      <label for="lastName">Last Name:</label>
-      <input
-        type="text"
-        id="lastName"
-        name="lastName"
-        value="<%= user.lastName %>"
-      />
-      <label for="bio">Bio:</label>
-      <textarea id="bio" name="bio"><%= user.bio %></textarea>
-      <button type="submit">Update Profile</button>
-    </form>
+  <body class="<%= user ? 'member-page' : 'guest-page' %>">
+        <%- include('../partials/navbar', { page: 'other' }) %>
+    <main class="form-page">
+      <h1>Edit Profile</h1>
+            <form action="/profiles/me?_method=PUT" method="post" enctype="multipart/form-data">
+        <div>
+          <label for="image">Profile photo</label>
+          <img class="preview-image" src="<%= user.profilePicture %>" alt="Your current profile photo" />
+          <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png,.webp" />
+        </div>
+        <div>
+          <label for="firstName">First name</label>
+          <input type="text" id="firstName" name="firstName" value="<%= user.firstName %>" maxlength="50" />
+        </div>
+        <div>
+          <label for="lastName">Last name</label>
+          <input type="text" id="lastName" name="lastName" value="<%= user.lastName %>" maxlength="50" />
+        </div>
+        <div>
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" rows="4" maxlength="300"><%= user.bio %></textarea>
+        </div>
+        <button type="submit">Update Profile</button>
+      </form>
+
+            <section class="delete-account">
+        <h2>Delete account</h2>
+        <p>This permanently removes your account, posts, favorites and history.</p>
+        <form action="/profiles/me?_method=DELETE" method="post" id="delete-account-form">
+          <button type="submit">Delete my account</button>
+        </form>
+      </section>
+      <a href="/auth/profile">Back to profile</a>
+    </main>
   </body>
 </html>

@@ -3,32 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Edit Blog</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/app.js" defer></script>
   </head>
-  <body>
-    <h1>Edit Blog</h1>
-    <form action="/blogs/<%= blog._id %>?_method=PUT" method="post">
-      <div>
-        <label for="title">Blog title</label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          required
-          value="<%= blog.title %>"
-        />
-      </div>
-
-      <div>
-        <label for="content">Your opinion / experience</label>
-        <textarea id="content" name="content" required>
-        <%= blog.content %></textarea
-        >
-      </div>
-
-      <button type="submit">Save changes</button>
-    </form>
-
-    <a href="/auth/profile">Back to profile</a>
+  <body class="<%= user ? 'member-page' : 'guest-page' %>">
+        <%- include('../partials/navbar', { page: 'other' }) %>
+    <main class="form-page">
+      <h1>Edit Blog</h1>
+            <form action="/blogs/<%= blog._id %>?_method=PUT" method="post">
+        <div>
+          <label for="title">Blog title</label>
+          <input type="text" id="title" name="title" maxlength="100" required value="<%= blog.title %>" />
+        </div>
+        <div>
+          <label for="content">Your opinion / experience</label>
+          <textarea id="content" name="content" rows="8" maxlength="5000" required><%= blog.content %></textarea>
+        </div>
+        <button type="submit">Save changes</button>
+      </form>
+      <a href="/auth/profile">Back to profile</a>
+    </main>
   </body>
 </html>

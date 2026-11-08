@@ -3,19 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Create Blog</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/app.js" defer></script>
   </head>
-  <body>
-    <h1>Create Blog</h1>
-      <% if (!listings.length) { %>
+  <body class="<%= user ? 'member-page' : 'guest-page' %>">
+        <%- include('../partials/navbar', { page: 'other' }) %>
+    <main class="form-page">
+      <h1>Create Blog</h1>
+            <% if (!listings.length) { %>
         <p>Save a photographer listing to your favorites first.</p>
         <a href="/">Find a listing</a>
       <% } else { %>
-
-      <form action="/blogs" method="post">
-
+            <form action="/blogs" method="post">
         <div>
-
           <label for="listing">Choose a listing from your favorites</label>
           <select id="listing" name="listing" required>
             <option value="">Choose a package</option>
@@ -23,27 +24,19 @@
               <option value="<%= listing._id %>"><%= listing.title %></option>
             <% } %>
           </select>
-
         </div>
-
         <div>
-
           <label for="title">Blog title</label>
-          <input type="text" id="title" name="title" maxlength="100" required />
-
+          <input type="text" id="title" name="title" required />
         </div>
-
         <div>
-
           <label for="content">Your opinion / experience</label>
           <textarea id="content" name="content" required></textarea>
-
         </div>
-
         <button type="submit">Publish blog</button>
-        
       </form>
       <% } %>
       <a href="/auth/profile">Back to profile</a>
+    </main>
   </body>
 </html>

@@ -1,62 +1,62 @@
-const express = require("express");
-const router = express.Router();
-const User = require("../models/User.js");
+const router = require("express").Router();
+const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const isSignedIn = require("../middleware/is-signed-in");
 
 router.get("/sign-up", (req, res) => {
   if (req.session.user) return res.redirect("/");
   res.render("auth/sign-up.ejs");
 });
-router.get("/sign-in", (req, res) => {
-  if (req.session.user) return res.redirect("/");
-  res.render("auth/sign-in.ejs");
-});
-router.get("/profile", (req, res) => {
-  if (!req.session.user) return res.redirect("/auth/sign-in");
-  res.redirect("/profiles/" + req.session.user._id);
-});
 
 router.post("/sign-up", async (req, res) => {
-  if (req.body.role !== "user" && req.body.role !== "photographer") {
+  const {
+    role,
+    password,
+    confirmPassword,
+    businessName,
+    address,
+    phoneNumber,
+  } = req.body;
+  const username = (req.body.username || "").trim();
+  const email = (req.body.email || "").trim().toLowerCase();
+
+  if (role !== "user" && role !== "photographer") {
     return res.send("Choose user or photographer.");
   }
-  if (!req.body.username || !req.body.email || !req.body.password) {
+  if (!username || !email || !password) {
     return res.send("Username, email and password are required.");
   }
-  if (
-    req.body.password.length < 4 ||
-    req.body.password !== req.body.confirmPassword
-  ) {
-    return res.send("Use matching passwords with at least 4 characters.");
+  if (password.length < 8 || password !== confirmPassword) {
+    return res.send("Use matching passwords with at least 8 characters.");
   }
-
-  if (
-    req.body.role === "photographer" &&
-    (!req.body.businessName || !req.body.address || !req.body.phoneNumber)
-  ) {
+  if (role === "photographer" && !(businessName && address && phoneNumber)) {
     return res.send("Fill in the business name, address and phone number.");
   }
 
-  const foundUser = await User.findOne({
-    $or: [{ username: req.body.username }, { email: req.body.email }],
-  });
+  const foundUser = await User.findOne({ $or: [{ username }, { email }] });
   if (foundUser) return res.send("Username or email already taken.");
+
   await User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: await bcrypt.hash(req.body.password, 10),
+    username,
+    email,
+    password: await bcrypt.hash(password, 10), // Hash protects the password.
     firstName: req.body.firstName,
     lastName: req.body.lastName,
-    role: req.body.role,
-    businessName: req.body.businessName,
-    address: req.body.address,
-    phoneNumber: req.body.phoneNumber,
+    role,
+    businessName,
+    address,
+    phoneNumber,
   });
   res.redirect("/auth/sign-in");
 });
 
+router.get("/sign-in", (req, res) => {
+  if (req.session.user) return res.redirect("/");
+  res.render("auth/sign-in.ejs");
+});
+
 router.post("/sign-in", async (req, res, next) => {
-  const username = req.body.username || "";
+  const username = (req.body.username || "").trim();
   const foundUser = await User.findOne({ username });
   const passwordMatches =
     foundUser &&
@@ -66,7 +66,7 @@ router.post("/sign-in", async (req, res, next) => {
   req.session.regenerate((error) => {
     if (error) return next(error);
     req.session.user = {
-      _id: foundUser._id,
+      _id: foundUser._id.toString(),
       username: foundUser.username,
       role: foundUser.role,
       profilePicture: foundUser.profilePicture,
@@ -74,10 +74,7 @@ router.post("/sign-in", async (req, res, next) => {
       lastName: foundUser.lastName,
       bio: foundUser.bio,
     };
-    req.session.save((saveError) => {
-      if (saveError) return next(saveError);
-      res.redirect("/");
-    });
+    res.redirect("/");
   });
 });
 
@@ -87,6 +84,13 @@ router.post("/sign-out", (req, res, next) => {
     res.clearCookie("connect.sid");
     res.redirect("/");
   });
+});
+
+router.get("/profile", isSignedIn, (req, res) => {
+  res.redirect("/profiles/" + req.session.user._id);
+});
+router.get("/edit-profile", isSignedIn, (req, res) => {
+  res.redirect("/profiles/me/edit");
 });
 
 module.exports = router;

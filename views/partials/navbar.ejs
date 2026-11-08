@@ -1,66 +1,32 @@
 <% if (user) { %>
-    <aside>
-        <a href="/" aria-label="home">
-        <span class="nav-label">home</span>
-        </a>
-        
-        <nav aria-label="Main navigation">
-            <% if (typeof page !== 'undefined' && page === 'home') { %>
-                <button type="button" id="show-listings" aria-label="Photographer listings" aria-pressed="true">
-                <span>Photographer listings</span>
-                </button>
-                <button type="button" id="show-blogs" aria-label="User blogs" aria-pressed="false">
-                <span>User blogs</span>
-                </button>
-            <% } else { %>
-                <a href="/#listings" aria-label="Photographer listings">
-                <span>Photographer listings</span>
-                </a>
-                <a href="/#blogs" aria-label="User blogs">
-                <span>User blogs</span>
-                </a>
-            <% } %>
+    <nav>
+    <a href="/">Frame</a>
 
-            <% if (user.role === 'user') { %>
-                <a id="cart-link" href="/cart" aria-label="Cart">
-                <span>Cart</span>
-                </a>
-            <% } %>
-
-            <% if (user.role === 'photographer') { %>
-                <a href="/listings/new" aria-label="Create post">
-                    <span>Create listing</span>
-                </a>
-            <% } else { %>
-                <a href="/blogs/new" aria-label="Create post">
-                    <span>Create blog</span>
-                </a>
-            <% } %>
-
-
-            <a href="/auth/profile" aria-label="Your profile">
-                <img src="<%= user.profilePicture %>" alt="" />
-                <span>Your profile</span>
-            </a>
-        </nav>
-
-            <form action="/auth/sign-out" method="post">
-            <button type="submit" aria-label="Sign out">
-                <span>Sign out</span>
-            </button>
-            </form>
-    </aside>
-
-    <% if (user.role === 'user') { %>
-        <p id="cart-message" role="status" aria-live="polite" hidden></p>
+        <% if (page === 'home') { %>
+      <button type="button" id="show-listings" aria-pressed="true">Listings</button>
+      <button type="button" id="show-blogs" aria-pressed="false">Blogs</button>
+    <% } else { %>
+      <a href="/#listings">Listings</a>
+      <a href="/#blogs">Blogs</a>
     <% } %>
 
-    <% } else { %>
-    <nav aria-label="Main navigation">
-        <a href="/">ha<span>.</span></a>
-        <div>
-            <a href="/auth/sign-in">Sign in</a>
-            <a href="/auth/sign-up">Sign up</a>
-        </div>
-    </nav>
+    <% if (user.role === 'user') { %>
+      <a href="/cart">Cart</a>
+    <% } %>
+
+        <a href="<%= user.role === 'photographer' ? '/listings/new' : '/blogs/new' %>"><%= user.role === 'photographer' ? 'Create listing' : 'Create blog' %></a>
+    <a href="/auth/profile">Profile</a>
+
+    <form action="/auth/sign-out" method="post" style="display: inline">
+      <button type="submit">Sign out</button>
+    </form>
+  </nav>
+  <hr />
+<% } else { %>
+    <nav>
+    <a href="/">Frame</a>
+    <a href="/auth/sign-in">Sign in</a>
+    <a href="/auth/sign-up">Sign up</a>
+  </nav>
+  <hr />
 <% } %>

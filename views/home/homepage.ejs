@@ -4,40 +4,63 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
+        <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/app.js" defer></script>
   </head>
   <body class="<%= user ? 'member-page' : 'guest-page' %> home-page">
-    
-    <%- include('../partials/navbar', { page: 'home' }) %>
+        <%- include('../partials/navbar', { page: 'home' }) %>
     <main class="home-content">
-     
-      <header class="feed-heading">
+            <header class="feed-heading">
         <h1>Discover</h1>
       </header>
-      <section id="listings-feed">
+
+            <section id="listings-feed">
         <h2>Photographer listings</h2>
         <% if (!listings.length) { %>
           <p>No listings have been posted yet.</p>
         <% } %>
         <% for (let listing of listings) { %>
           <article class="post feed-post">
-            <% if (listing.owner) { %>
+                        <% if (listing.owner) { %>
               <a class="post-author" href="/profiles/<%= listing.owner._id %>" title="View <%= listing.owner.username %>'s profile">
                 <img class="avatar" src="<%= listing.owner.profilePicture %>" alt="" />
                 <span><strong><%= listing.owner.username %></strong><small>Photographer</small></span>
               </a>
             <% } %>
-            <a href="/listings/<%= listing._id %>">
-              <img class="post-image" src="<%= listing.image %>" alt="<%= listing.title %>" />
-            </a>
+            <% const mediaFiles = listing.media && listing.media.length ? listing.media : [{ url: listing.image, type: 'image' }]; %>
+            <div class="listing-media" data-index="0" role="group" aria-label="Listing photos and videos">
+              <div class="media-stage">
+                <% mediaFiles.forEach((file, index) => { %>
+                  <div class="media-slide" <%= index > 0 ? 'hidden' : '' %>>
+                    <% if (file.type === 'video') { %>
+                      <video src="<%= file.url %>" controls preload="metadata"></video>
+                    <% } else { %>
+                      <a href="/listings/<%= listing._id %>">
+                        <img class="post-image" src="<%= file.url %>" alt="<%= listing.title %> photo <%= index + 1 %>" />
+                      </a>
+                    <% } %>
+                  </div>
+                <% }) %>
+              </div>
+              <% if (mediaFiles.length > 1) { %>
+                <div class="media-controls">
+                  <button class="media-prev" type="button" aria-label="Previous photo or video">‹</button>
+                  <span class="media-count" aria-live="polite">1 / <%= mediaFiles.length %></span>
+                  <button class="media-next" type="button" aria-label="Next photo or video">›</button>
+                </div>
+              <% } %>
+            </div>
             <h2><a href="/listings/<%= listing._id %>"><%= listing.title %></a></h2>
             <p><%= listing.description %></p>
             <p class="price">$<%= listing.price.toFixed(2) %></p>
 
-            <form action="/listings/<%= listing._id %>/favorite" method="post">
+                        <form action="/listings/<%= listing._id %>/favorite" method="post">
+              <input type="hidden" name="back" value="/#listings" />
               <button type="submit"><%= listing.favBy.some(id => id.equals(user._id)) ? '♥ Remove favorite' : '♡ Add favorite' %></button>
             </form>
-            <% if (user.role === 'user') { %>
-            <form class="add-to-cart" data-image="<%= listing.image %>" action="/cart/add/<%= listing._id %>" method="post">
+                        <% if (user.role === 'user') { %>
+            <form class="add-to-cart" action="/cart/add/<%= listing._id %>" method="post">
+              <input type="hidden" name="back" value="/#listings" />
               <button type="submit">Add to cart</button>
             </form>
             <% } %>
@@ -45,14 +68,14 @@
         <% } %>
       </section>
 
-      <section id="blogs-feed" hidden>
+            <section id="blogs-feed" hidden>
         <h2>User blogs</h2>
         <% if (!blogs.length) { %>
           <p>No blogs have been posted yet.</p>
         <% } %>
         <% for (let blog of blogs) { %>
           <article class="post feed-post">
-            <% if (blog.owner) { %>
+                        <% if (blog.owner) { %>
               <a class="post-author" href="/profiles/<%= blog.owner._id %>" title="View <%= blog.owner.username %>'s profile">
                 <img class="avatar" src="<%= blog.owner.profilePicture %>" alt="" />
                 <span><strong><%= blog.owner.username %></strong><small>Community story</small></span>
@@ -67,7 +90,8 @@
             <% } %>
             <h2><a href="/blogs/<%= blog._id %>"><%= blog.title %></a></h2>
             <p><%= blog.content %></p>
-            <form action="/blogs/<%= blog._id %>/favorite" method="post">
+                        <form action="/blogs/<%= blog._id %>/favorite" method="post">
+              <input type="hidden" name="back" value="/#blogs" />
               <button type="submit"><%= blog.favBy.some(id => id.equals(user._id)) ? '♥ Remove favorite' : '♡ Add favorite' %></button>
             </form>
           </article>

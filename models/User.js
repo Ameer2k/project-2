@@ -7,11 +7,14 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      maxlength: 30,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
@@ -20,10 +23,14 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       trim: true,
+      default: "",
+      maxlength: 50,
     },
     lastName: {
       type: String,
       trim: true,
+      default: "",
+      maxlength: 50,
     },
     address: {
       type: String,
@@ -33,14 +40,17 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     phoneNumber: {
-      type: Number,
+      type: String,
+      trim: true,
     },
     bio: {
       type: String,
       default: "",
+      maxlength: 300,
     },
     profilePicture: {
       type: String,
+      default: "/images/avatar.svg",
     },
     following: [
       {
