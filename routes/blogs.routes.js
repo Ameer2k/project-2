@@ -13,7 +13,7 @@ router.post("/", checkRole("user"), async (req, res) => {
     _id: req.body.listing,
     favBy: req.session.user._id,
   });
-  if (!listing) return "Choose a listing from your favorites first.";
+  if (!listing) return res.send("Choose a listing from your favorites first.");
   await Blog.create({
     title: req.body.title,
     content: req.body.content,
@@ -24,12 +24,12 @@ router.post("/", checkRole("user"), async (req, res) => {
 });
 
 router.get("/", (req, res) => {
-  res.redirect("/blogs");
+  res.redirect("/#blogs");
 });
 
 router.get("/:id", async (req, res) => {
   const blog = await Blog.findById(req.params.id).populate("owner listing");
-  if (!blog) return "Blog not found.";
+  if (!blog) return res.send("Blog not found.");
   res.render("blogs/blog-detail.ejs", { blog });
 });
 
@@ -38,7 +38,7 @@ router.get("/:id/edit", async (req, res) => {
     _id: req.params.id,
     owner: req.session.user._id,
   });
-  if (!blog) return "Your blog was not found.";
+  if (!blog) return res.send("Your blog was not found.");
   res.render("blogs/edit-blog.ejs", { blog });
 });
 
@@ -47,7 +47,7 @@ router.put("/:id", async (req, res) => {
     _id: req.params.id,
     owner: req.session.user._id,
   });
-  if (!blog) return "Your blog was not found.";
+  if (!blog) return res.send("Your blog was not found.");
   blog.title = req.body.title;
   blog.content = req.body.content;
   await blog.save();
@@ -59,14 +59,28 @@ router.delete("/:id", async (req, res) => {
     _id: req.params.id,
     owner: req.session.user._id,
   });
-  if (!blog) return "Your blog was not found.";
+  if (!blog) return res.send("Your blog was not found.");
   res.redirect("/auth/profile");
 });
 
 router.post("/:id/favorite", async (req, res) => {
-  if (!(await Blog.exists({ _id: req.params.id }))) return "Blog not found.";
-  await (Blog, req.params.id, "favBy", req.session.user._id);
-  res.redirect("/blogs");
+  const blog = await Blog.findById(req.params.id);
+  if (!blog) return res.send("Blog not found.");
+  const alreadyFavorited = blog.favBy.some((id) =>
+    id.equals(req.session.user._id),
+  );
+  await Blog.findByIdAndUpdate(
+    blog._id,
+    alreadyFavorited
+      ? { $pull: { favBy: req.session.user._id } }
+      : { $addToSet: { favBy: req.session.user._id } },
+  );
+  const back = req.body.back;
+  res.redirect(
+    typeof back === "string" && back.startsWith("/") && !back.startsWith("//")
+      ? back
+      : "/#blogs",
+  );
 });
 
 module.exports = router;

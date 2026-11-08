@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+  </head>
+  <body class="<%= user ? 'member-page' : 'guest-page' %> home-page">
+    
+    <%- include('../partials/navbar', { page: 'home' }) %>
+    <main class="home-content">
+     
+      <header class="feed-heading">
+        <h1>Discover</h1>
+      </header>
+      <section id="listings-feed">
+        <h2>Photographer listings</h2>
+        <% if (!listings.length) { %>
+          <p>No listings have been posted yet.</p>
+        <% } %>
+        <% for (let listing of listings) { %>
+          <article class="post feed-post">
+            <% if (listing.owner) { %>
+              <a class="post-author" href="/profiles/<%= listing.owner._id %>" title="View <%= listing.owner.username %>'s profile">
+                <img class="avatar" src="<%= listing.owner.profilePicture %>" alt="" />
+                <span><strong><%= listing.owner.username %></strong><small>Photographer</small></span>
+              </a>
+            <% } %>
+            <a href="/listings/<%= listing._id %>">
+              <img class="post-image" src="<%= listing.image %>" alt="<%= listing.title %>" />
+            </a>
+            <h2><a href="/listings/<%= listing._id %>"><%= listing.title %></a></h2>
+            <p><%= listing.description %></p>
+            <p class="price">$<%= listing.price.toFixed(2) %></p>
+
+            <form action="/listings/<%= listing._id %>/favorite" method="post">
+              <button type="submit"><%= listing.favBy.some(id => id.equals(user._id)) ? '♥ Remove favorite' : '♡ Add favorite' %></button>
+            </form>
+            <% if (user.role === 'user') { %>
+            <form class="add-to-cart" data-image="<%= listing.image %>" action="/cart/add/<%= listing._id %>" method="post">
+              <button type="submit">Add to cart</button>
+            </form>
+            <% } %>
+          </article>
+        <% } %>
+      </section>
+
+      <section id="blogs-feed" hidden>
+        <h2>User blogs</h2>
+        <% if (!blogs.length) { %>
+          <p>No blogs have been posted yet.</p>
+        <% } %>
+        <% for (let blog of blogs) { %>
+          <article class="post feed-post">
+            <% if (blog.owner) { %>
+              <a class="post-author" href="/profiles/<%= blog.owner._id %>" title="View <%= blog.owner.username %>'s profile">
+                <img class="avatar" src="<%= blog.owner.profilePicture %>" alt="" />
+                <span><strong><%= blog.owner.username %></strong><small>Community story</small></span>
+              </a>
+            <% } %>
+            <% if (blog.listing) { %>
+              <a href="/blogs/<%= blog._id %>">
+                <img class="post-image" src="<%= blog.listing.image %>" alt="<%= blog.listing.title %>" />
+              </a>
+            <% } else { %>
+              <div class="post-placeholder">The original listing was deleted</div>
+            <% } %>
+            <h2><a href="/blogs/<%= blog._id %>"><%= blog.title %></a></h2>
+            <p><%= blog.content %></p>
+            <form action="/blogs/<%= blog._id %>/favorite" method="post">
+              <button type="submit"><%= blog.favBy.some(id => id.equals(user._id)) ? '♥ Remove favorite' : '♡ Add favorite' %></button>
+            </form>
+          </article>
+        <% } %>
+      </section>
+    </main>
+  </body>
+</html>

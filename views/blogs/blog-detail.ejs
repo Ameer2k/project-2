@@ -23,7 +23,7 @@
 
         <form action="/blogs/<%= blog._id %>/favorite" method="post">
           <input type="hidden" name="back" value="/blogs/<%= blog._id %>" />
-          <button type="submit"><%= blog.favBy.includes(user._id) ? 'Remove favorite' : 'Add favorite' %></button>
+          <button type="submit"><%= blog.favBy.some(id => id.equals(user._id)) ? 'Remove favorite' : 'Add favorite' %></button>
         </form>
 
         <% if (blog.owner && blog.owner._id.equals(user._id)) { %>

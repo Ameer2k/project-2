@@ -5,7 +5,7 @@
         </a>
         
         <nav aria-label="Main navigation">
-            <% if (page === 'home') { %>
+            <% if (typeof page !== 'undefined' && page === 'home') { %>
                 <button type="button" id="show-listings" aria-label="Photographer listings" aria-pressed="true">
                 <span>Photographer listings</span>
                 </button>
@@ -64,4 +64,3 @@
         </div>
     </nav>
 <% } %>
-

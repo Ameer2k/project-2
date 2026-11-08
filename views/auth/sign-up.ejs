@@ -8,6 +8,7 @@
   <body>
     <%- include('../partials/navbar') %>
     <div class="signup-container">
+      <form action="/auth/sign-up" method="post">
       <!-- <div class="toggle-container" id="roleToggle">
         <div class="toggle-slider"></div>
         <button type="button" class="toggle-btn active" data-role="user">
@@ -75,6 +76,7 @@
         </form>
 
         <p class="auth-bottom">Already have an account? <a href="/auth/sign-in">Sign in</a></p>
-      </section>
+    </div>
+    <script src="/js/app.js" defer></script>
   </body>
 </html>

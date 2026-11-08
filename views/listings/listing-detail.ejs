@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Listing Detail</title>
 </head>
 <body>
     <h1><%= listing.title %></h1>
@@ -20,7 +20,7 @@
         <form action="/listings/<%= listing._id %>/favorite" method="post">
 
           <input ttype="hidden" name="back" value="/listings/<%= listing._id %>" />
-          <button type="submit"><%= listing.favBy.includes(user._id) ? 'Remove favorite' : 'Add favorite' %>></button>
+          <button type="submit"><%= listing.favBy.some(id => id.equals(user._id)) ? 'Remove favorite' : 'Add favorite' %></button>
 
         </form>
 

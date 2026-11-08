@@ -9,23 +9,24 @@ router.get("/me/edit", (req, res) => {
   res.render("auth/edit-profile.ejs");
 });
 
-router.put("/me", upload.single("image"), async (req, res) => {
+router.put("/me", async (req, res) => {
   const profile = await User.findById(req.session.user._id);
+  if (!profile) return res.send("Profile not found.");
 
   profile.firstName = req.body.firstName;
   profile.lastName = req.body.lastName;
   profile.bio = req.body.bio;
 
-  if (req.file) profile.profilePicture = "/uploads/" + req.file.filename;
+  profile.profilePicture = req.body.profilePicture;
   await profile.save();
   req.session.user.firstName = profile.firstName;
   req.session.user.lastName = profile.lastName;
   req.session.user.bio = profile.bio;
   req.session.user.profilePicture = profile.profilePicture;
-  res.redirect("/auth/profile");
+  res.redirect("/profiles/" + profile._id);
 });
 
-router.delete("/me", async (req, res) => {
+router.delete("/me", async (req, res, next) => {
   const id = req.session.user._id;
   const listings = await Listing.find({ owner: id });
 
@@ -44,7 +45,11 @@ router.delete("/me", async (req, res) => {
   await Listing.updateMany({}, { $pull: { favBy: id } });
   await Blog.updateMany({}, { $pull: { favBy: id } });
   await User.findByIdAndDelete(id);
-  req.session.destroy(() => res.redirect("/"));
+  req.session.destroy((error) => {
+    if (error) return next(error);
+    res.clearCookie("connect.sid");
+    res.redirect("/");
+  });
 });
 
 router.get("/:id", async (req, res) => {
@@ -99,6 +104,7 @@ router.post("/:id/follow", async (req, res) => {
 
   if (!profile) return res.send("Profile not found.");
   const me = await User.findById(req.session.user._id);
+  if (!me) return res.send("Profile not found.");
 
   if (me._id.equals(profile._id)) return res.redirect("/auth/profile");
   if (me.following.includes(profile._id)) {
