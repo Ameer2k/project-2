@@ -14,11 +14,11 @@
             <form action="/blogs/<%= blog._id %>?_method=PUT" method="post">
         <div>
           <label for="title">Blog title</label>
-          <input type="text" id="title" name="title" maxlength="100" required value="<%= blog.title %>" />
+          <input type="text" id="title" name="title" required value="<%= blog.title %>" />
         </div>
         <div>
           <label for="content">Your opinion / experience</label>
-          <textarea id="content" name="content" rows="8" maxlength="5000" required><%= blog.content %></textarea>
+          <textarea id="content" name="content" required><%= blog.content %></textarea>
         </div>
         <button type="submit">Save changes</button>
       </form>

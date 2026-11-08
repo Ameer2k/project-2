@@ -10,13 +10,14 @@
   <body class="member-page">
     <%- include('../partials/navbar', { page: 'other' }) %>
     <main class="cart-page">
+      
       <header class="cart-heading">
         <h1>Your cart</h1>
         <p><%= cartItems.length %> photography <%= cartItems.length === 1 ? 'package' : 'packages' %></p>
       </header>
 
       <% if (!cartItems.length) { %>
-                <div class="empty-state">
+        <div class="empty-state">
           <span aria-hidden="true"></span>
           <h2>Your cart is empty</h2>
           <p>Find a photography package you love.</p>
@@ -25,33 +26,39 @@
       <% } else { %>
         <div class="cart-layout">
           <section class="cart-list" aria-label="Cart items">
+            
             <% let total = 0; %>
             <% for (let item of cartItems) { %>
               <% total = total + item.price; %>
               <% const preview = item.description.length > 110 ? item.description.slice(0, 110) + '…' : item.description; %>
-                            <article class="cart-row">
-                <a class="cart-photo" href="/listings/<%= item._id %>">
-                  <img src="<%= item.image %>" alt="<%= item.title %>" />
-                </a>
-                <div class="cart-info">
-                  <h2><a href="/listings/<%= item._id %>"><%= item.title %></a></h2>
-                                    <p class="cart-description"><%= preview %></p>
-                  <form action="/cart/remove/<%= item._id %>?_method=DELETE" method="post">
-                    <button type="submit">Remove</button>
-                  </form>
-                </div>
-                <strong class="cart-price">$<%= item.price.toFixed(2) %></strong>
-              </article>
+                <article class="cart-row">
+                  
+                  <a class="cart-photo" href="/listings/<%= item._id %>">
+                    <img src="<%= item.image %>" alt="<%= item.title %>" />
+                  </a>
+                 
+                  <div class="cart-info">
+                    
+                    <h2><a href="/listings/<%= item._id %>"><%= item.title %></a></h2>
+                    <p class="cart-description"><%= preview %></p>
+                    
+                    <form action="/cart/remove/<%= item._id %>?_method=DELETE" method="post">
+                      <button type="submit">Remove</button>
+                    </form>
+                  
+                  </div>
+                  <strong class="cart-price">$<%= item.price.toFixed(2) %></strong>
+                </article>
             <% } %>
           </section>
 
-                    <aside class="cart-summary">
-            <h2>Order summary</h2>
-            <p><%= cartItems.length %> <%= cartItems.length === 1 ? 'package' : 'packages' %></p>
-            <div class="cart-total"><span>Total</span><strong>$<%= total.toFixed(2) %></strong></div>
-                        <form action="/cart/checkout" method="post">
-              <button type="submit">Complete order</button>
-            </form>
+            <aside class="cart-summary">
+              <h2>Order summary</h2>
+              <p><%= cartItems.length %> <%= cartItems.length === 1 ? 'package' : 'packages' %></p>
+              <div class="cart-total"><span>Total</span><strong>$<%= total.toFixed(2) %></strong></div>
+              <form action="/cart/checkout" method="post">
+                <button type="submit">Complete order</button>
+              </form>
           </aside>
         </div>
         <a class="continue-link" href="/">← Continue discovering</a>

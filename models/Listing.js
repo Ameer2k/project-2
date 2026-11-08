@@ -6,7 +6,6 @@ const listingSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      maxlength: 100,
     },
     image: {
       type: String,
@@ -16,13 +15,10 @@ const listingSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      maxlength: 3000,
     },
     price: {
       type: Number,
       required: true,
-      min: 0,
-      max: 1000000,
     },
     media: {
       type: [

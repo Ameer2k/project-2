@@ -14,7 +14,7 @@
             <form action="/listings/<%= listing._id %>?_method=PUT" method="post" enctype="multipart/form-data">
         <div>
           <label for="title">Package title</label>
-          <input type="text" id="title" name="title" maxlength="100" required value="<%= listing.title %>" />
+          <input type="text" id="title" name="title" required value="<%= listing.title %>" />
         </div>
                 <fieldset class="edit-media">
           <legend>Current photos and videos</legend>
@@ -38,7 +38,7 @@
         </div>
         <div>
           <label for="description">Description</label>
-          <textarea id="description" name="description" rows="6" maxlength="3000" required><%= listing.description %></textarea>
+          <textarea id="description" name="description" required><%= listing.description %></textarea>
         </div>
         <div>
           <label for="price">Price ($)</label>

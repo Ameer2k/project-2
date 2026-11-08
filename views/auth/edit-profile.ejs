@@ -14,7 +14,7 @@
             <form action="/profiles/me?_method=PUT" method="post" enctype="multipart/form-data">
         <div>
           <label for="image">Profile photo</label>
-          <img class="preview-image" src="<%= user.profilePicture %>" alt="Your current profile photo" />
+          <img class="preview-image" src="<%= user.profilePicture %>"/>
           <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png,.webp" />
         </div>
         <div>
@@ -27,7 +27,7 @@
         </div>
         <div>
           <label for="bio">Bio</label>
-          <textarea id="bio" name="bio" rows="4" maxlength="300"><%= user.bio %></textarea>
+          <textarea id="bio" name="bio"><%= user.bio %></textarea>
         </div>
         <button type="submit">Update Profile</button>
       </form>
