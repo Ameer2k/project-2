@@ -93,7 +93,7 @@
 
             <section id="profile-posts" role="tabpanel" aria-labelledby="show-posts">
         <% if (!listings.length && !blogs.length) { %>
-          <div class="empty-state"><span aria-hidden="true">◎</span><h2>No posts yet</h2><p>Your published work will appear here.</p></div>
+          <div class="empty-state"><h2>No posts yet</h2><p>Your published work will appear here.</p></div>
         <% } %>
         <div class="profile-grid">
                     <% for (let listing of listings) { %>
@@ -138,7 +138,7 @@
       <% if (ownProfile) { %>
                 <section id="profile-favorites" role="tabpanel" aria-labelledby="show-favorites" hidden>
           <% if (!favorites.length && !favoriteBlogs.length) { %>
-            <div class="empty-state"><span aria-hidden="true">♡</span><h2>Save what inspires you</h2><p>Your favorite posts will appear here.</p></div>
+            <div class="empty-state"><h2>Save what inspires you</h2><p>Your favorite posts will appear here.</p></div>
           <% } %>
           <div class="profile-grid">
             <% for (let listing of favorites) { %>
@@ -179,7 +179,7 @@
         <% if (user.role === 'user') { %>
                 <section id="profile-history" role="tabpanel" aria-labelledby="show-history" hidden>
           <% if (!orders.length) { %>
-            <div class="empty-state"><span aria-hidden="true">◷</span><h2>No orders yet</h2><p>Completed will appear here.</p><a href="/cart">Open your cart</a></div>
+            <div class="empty-state"><h2>No orders yet</h2><p>Completed will appear here.</p><a href="/cart">Open your cart</a></div>
           <% } %>
           <% for (let order of orders) { %>
             <article class="order-card">
