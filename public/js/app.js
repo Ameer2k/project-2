@@ -17,7 +17,7 @@ const profileTabs = document.querySelector("#profile-tabs");
 
 function showTab(name) {
   profileTabs.dataset.active = name; // CSS moves the slider.
-  for (const tab of ["posts", "favorites", "history"]) {
+  for (const tab of ["posts", "favorites"]) {
     const button = document.querySelector("#show-" + tab);
     const section = document.querySelector("#profile-" + tab);
     if (!button) continue; // This account does not have that section.
@@ -60,26 +60,14 @@ function confirmDelete(event) {
 }
 if (deleteAccountForm) deleteAccountForm.addEventListener("submit", confirmDelete);
 
-const followersDialog = document.querySelector("#followers-dialog");
-const followingDialog = document.querySelector("#following-dialog");
-
-if (followersDialog) {
-  document.querySelector("#open-followers").addEventListener("click", () => followersDialog.showModal());
-  document.querySelector("#close-followers").addEventListener("click", () => followersDialog.close());
-  document.querySelector("#open-following").addEventListener("click", () => followingDialog.showModal());
-  document.querySelector("#close-following").addEventListener("click", () => followingDialog.close());
-}
-
 function moveMedia(event) {
   const button = event.currentTarget;
   const gallery = button.closest(".listing-media");
   const slides = gallery.querySelectorAll(".media-slide");
   let index = Number(gallery.dataset.index);
-  const video = slides[index].querySelector("video");
-  if (video) video.pause(); // Stop a video when its slide is hidden.
   slides[index].hidden = true;
-  if (button.classList.contains("media-next")) index = (index + 1) % slides.length;
-  else index = (index + slides.length - 1) % slides.length;
+  const direction = button.classList.contains("media-next") ? 1 : -1;
+  index = (index + direction + slides.length) % slides.length;
   slides[index].hidden = false;
   gallery.dataset.index = index;
   gallery.querySelector(".media-count").textContent = (index + 1) + " / " + slides.length;

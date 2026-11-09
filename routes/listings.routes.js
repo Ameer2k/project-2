@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const path = require("node:path");
 const Listing = require("../models/Listing");
 const Cart = require("../models/Cart");
 const Blog = require("../models/Blog");
@@ -17,22 +16,13 @@ const upload = createUploader(25 * 1024 * 1024, {
   ".jpeg": "image/jpeg",
   ".png": "image/png",
   ".webp": "image/webp",
-  ".mp4": "video/mp4",
-  ".webm": "video/webm",
 });
 const uploadListingMedia = upload.array("image", MAX_FILES);
-
-function mediaForListing(listing) {
-  if (listing.media.length) return listing.media;
-  return [{ url: listing.image, type: "image" }];
-}
 
 function toMedia(files) {
   return files.map((file) => ({
     url: "/uploads/" + file.filename,
-    type: [".mp4", ".webm"].includes(path.extname(file.filename))
-      ? "video"
-      : "image",
+    type: "image",
   }));
 }
 
@@ -42,8 +32,7 @@ function coverOf(media) {
 }
 
 async function getListingFiles(listing) {
-  const media = mediaForListing(listing);
-  return media.map((file) => file.url);
+  return listing.media.map((file) => file.url);
 }
 
 router.get("/new", checkRole("photographer"), (req, res) => {
@@ -57,7 +46,7 @@ router.post(
   async (req, res) => {
     const files = req.files || [];
     if (!files.length) {
-      return res.send("Choose at least one photo or video.");
+      return res.send("Choose at least one image.");
     }
 
     const media = toMedia(files);
@@ -81,7 +70,6 @@ router.post(
 router.get("/:id", async (req, res) => {
   const listing = await Listing.findById(req.params.id).populate("owner");
   if (!listing) return res.send("Listing not found.");
-  listing.media = mediaForListing(listing);
   res.render("listings/listing-detail.ejs", { listing });
 });
 
@@ -109,24 +97,18 @@ router.put(
       return res.send("Your listing was not found.");
     }
 
-    const hasLegacyImage = !listing.media.length && Boolean(listing.image);
-    const oldMedia = mediaForListing(listing);
+    const oldMedia = listing.media;
     const removeIds = [].concat(req.body.removeMedia || []);
     const removedMedia = oldMedia.filter(
-      (file) =>
-        (file._id && removeIds.includes(file._id.toString())) ||
-        (hasLegacyImage && removeIds.includes("legacy-image")),
+      (file) => file._id && removeIds.includes(file._id.toString()),
     );
-    const media =
-      hasLegacyImage && removeIds.includes("legacy-image")
-        ? []
-        : oldMedia.filter(
-            (file) => !file._id || !removeIds.includes(file._id.toString()),
-          );
+    const media = oldMedia.filter(
+      (file) => !file._id || !removeIds.includes(file._id.toString()),
+    );
     media.push(...toMedia(files));
     if (!media.length || media.length > MAX_FILES) {
       await removeUploadedFiles(files);
-      return res.send("Keep between 1 and " + MAX_FILES + " photos or videos.");
+      return res.send("Keep between 1 and " + MAX_FILES + " images.");
     }
 
     listing.media = media;

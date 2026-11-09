@@ -30,8 +30,8 @@
                 <span><strong><%= listing.owner.username %></strong><small>Photographer</small></span>
               </a>
             <% } %>
-            <% const mediaFiles = listing.media && listing.media.length ? listing.media : [{ url: listing.image, type: 'image' }]; %>
-            <div class="listing-media" data-index="0" role="group" aria-label="Listing photos and videos">
+            <% const mediaFiles = listing.media; %>
+            <div class="listing-media" data-index="0" role="group" aria-label="Listing photos">
               <div class="media-stage">
                 <% mediaFiles.forEach((file, index) => { %>
                   <div class="media-slide" <%= index > 0 ? 'hidden' : '' %>>

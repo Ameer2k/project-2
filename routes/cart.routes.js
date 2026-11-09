@@ -70,7 +70,7 @@ router.post("/checkout", async (req, res) => {
     throw error;
   }
   await Cart.deleteOne({ _id: cart._id });
-  res.redirect("/auth/profile"); // Cart history is on your profile.
+  res.redirect("/cart");
 });
 
 module.exports = router;

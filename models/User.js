@@ -48,12 +48,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "/images/avatar.svg",
     },
-    following: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
     role: {
       type: String,
       enum: ["user", "admin", "photographer"],

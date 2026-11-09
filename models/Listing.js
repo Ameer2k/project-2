@@ -45,12 +45,6 @@ const listingSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-listingSchema.pre("validate", function () {
-  if (!this.media.length && this.image) {
-    this.media.push({ url: this.image, type: "image" });
-  }
-});
-
 const Listing = mongoose.model("Listing", listingSchema);
 
 module.exports = Listing;

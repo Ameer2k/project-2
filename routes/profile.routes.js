@@ -4,25 +4,18 @@ const User = require("../models/User");
 const Listing = require("../models/Listing");
 const Blog = require("../models/Blog");
 const Cart = require("../models/Cart");
-const Order = require("../models/Order");
 const {
   createUploader,
   removeUploadedFiles,
   removeUploadedPaths,
 } = require("../middleware/file-uploads");
 
-const PERSON_FIELDS = "username profilePicture firstName lastName";
 const profileUpload = createUploader(5 * 1024 * 1024, {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".png": "image/png",
   ".webp": "image/webp",
 }).single("image");
-
-function mediaForListing(listing) {
-  if (listing.media && listing.media.length) return listing.media;
-  return listing.image ? [{ url: listing.image, type: "image" }] : [];
-}
 
 router.get("/me/edit", (req, res) => {
   res.render("auth/edit-profile.ejs");
@@ -75,7 +68,7 @@ router.delete("/me", async (req, res, next) => {
   ]);
   const listingIds = myListings.map((listing) => listing._id);
   const mediaPaths = myListings.flatMap((listing) =>
-    mediaForListing(listing).map((file) => file.url),
+    listing.media.map((file) => file.url),
   );
   const profilePicture = profile && profile.profilePicture;
 
@@ -88,7 +81,6 @@ router.delete("/me", async (req, res, next) => {
   await Blog.deleteMany({ owner: id });
   await Cart.deleteMany({ owner: id });
   await Order.deleteMany({ owner: id });
-  await User.updateMany({}, { $pull: { following: id } });
   await Listing.updateMany({}, { $pull: { favBy: id } });
   await Blog.updateMany({}, { $pull: { favBy: id } });
   await User.findByIdAndDelete(id);
@@ -101,18 +93,12 @@ router.delete("/me", async (req, res, next) => {
   });
 });
 
-async function loadPrivateData(profile, role) {
-  const [followerUsers, followingUsers, favorites, favoriteBlogs, orders] =
-    await Promise.all([
-      User.find({ following: profile._id }).select(PERSON_FIELDS),
-      User.find({ _id: { $in: profile.following } }).select(PERSON_FIELDS),
-      Listing.find({ favBy: profile._id }),
-      Blog.find({ favBy: profile._id }).populate("listing"),
-      role === "user"
-        ? Order.find({ owner: profile._id }).sort({ createdAt: -1 })
-        : [],
-    ]);
-  return { followerUsers, followingUsers, favorites, favoriteBlogs, orders };
+async function loadPrivateData(profile) {
+  const [favorites, favoriteBlogs] = await Promise.all([
+    Listing.find({ favBy: profile._id }),
+    Blog.find({ favBy: profile._id }).populate("listing"),
+  ]);
+  return { favorites, favoriteBlogs };
 }
 
 router.get("/:id", async (req, res) => {
@@ -124,57 +110,22 @@ router.get("/:id", async (req, res) => {
   const me = req.session.user;
   const ownProfile = profile._id.equals(me._id);
 
-  const [listings, blogs, followers, isFollowing] = await Promise.all([
+  const [listings, blogs] = await Promise.all([
     Listing.find({ owner: profile._id }),
     Blog.find({ owner: profile._id }).populate("listing"),
-    User.countDocuments({ following: profile._id }),
-    User.exists({ _id: me._id, following: profile._id }),
   ]);
 
   const privateData = ownProfile
-    ? await loadPrivateData(profile, me.role)
-    : {
-        followerUsers: [],
-        followingUsers: [],
-        favorites: [],
-        favoriteBlogs: [],
-        orders: [],
-      };
+    ? await loadPrivateData(profile)
+    : { favorites: [], favoriteBlogs: [] };
 
   res.render("auth/profile.ejs", {
     profile,
     ownProfile,
     listings,
     blogs,
-    followers,
-    isFollowing,
     ...privateData,
   });
-});
-
-router.post("/:id/follow", async (req, res) => {
-  const myId = req.session.user._id;
-  if (!mongoose.isValidObjectId(req.params.id)) {
-    return res.send("Profile not found.");
-  }
-  if (String(req.params.id) === String(myId)) {
-    return res.redirect("/auth/profile");
-  }
-  if (!(await User.exists({ _id: req.params.id }))) {
-    return res.send("Profile not found.");
-  }
-
-  const alreadyFollowing = await User.exists({
-    _id: myId,
-    following: req.params.id,
-  });
-  await User.updateOne(
-    { _id: myId },
-    alreadyFollowing
-      ? { $pull: { following: req.params.id } }
-      : { $addToSet: { following: req.params.id } },
-  );
-  res.redirect("/profiles/" + req.params.id);
 });
 
 module.exports = router;
