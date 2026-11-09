@@ -69,10 +69,12 @@ router.post("/:id/favorite", async (req, res) => {
   if (!blog) return res.send("Blog not found.");
   const userId = req.session.user._id;
   const isFavorited = blog.favBy.some((id) => id.equals(userId));
-  const change = isFavorited
-    ? { $pull: { favBy: userId } }
-    : { $addToSet: { favBy: userId } };
-  await Blog.updateOne({ _id: blog._id }, change);
+  await Blog.updateOne(
+    { _id: blog._id },
+    isFavorited
+      ? { $pull: { favBy: userId } }
+      : { $addToSet: { favBy: userId } },
+  );
   res.redirect(getReturnPath(req, "/#blogs"));
 });
 

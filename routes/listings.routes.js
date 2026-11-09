@@ -20,19 +20,7 @@ const upload = createUploader(25 * 1024 * 1024, {
 const uploadListingMedia = upload.array("image", MAX_FILES);
 
 function toMedia(files) {
-  return files.map((file) => ({
-    url: "/uploads/" + file.filename,
-    type: "image",
-  }));
-}
-
-function coverOf(media) {
-  const photo = media.find((file) => file.type === "image");
-  return photo ? photo.url : "/images/camera.jpg";
-}
-
-async function getListingFiles(listing) {
-  return listing.media.map((file) => file.url);
+  return files.map((file) => ({ url: "/uploads/" + file.filename }));
 }
 
 router.get("/new", checkRole("photographer"), (req, res) => {
@@ -53,7 +41,7 @@ router.post(
     try {
       await Listing.create({
         title: req.body.title,
-        image: coverOf(media),
+        image: media[0].url,
         media,
         description: req.body.description,
         price: req.body.price,
@@ -98,12 +86,12 @@ router.put(
     }
 
     const oldMedia = listing.media;
-    const removeIds = [].concat(req.body.removeMedia || []);
-    const removedMedia = oldMedia.filter(
-      (file) => file._id && removeIds.includes(file._id.toString()),
+    const removeIds = new Set([].concat(req.body.removeMedia || []));
+    const removedMedia = oldMedia.filter((file) =>
+      removeIds.has(file._id.toString()),
     );
     const media = oldMedia.filter(
-      (file) => !file._id || !removeIds.includes(file._id.toString()),
+      (file) => !removeIds.has(file._id.toString()),
     );
     media.push(...toMedia(files));
     if (!media.length || media.length > MAX_FILES) {
@@ -112,7 +100,7 @@ router.put(
     }
 
     listing.media = media;
-    listing.image = coverOf(media);
+    listing.image = media[0].url;
     listing.title = req.body.title;
     listing.description = req.body.description;
     listing.price = req.body.price;
@@ -134,10 +122,9 @@ router.delete("/:id", checkRole("photographer"), async (req, res) => {
     owner: req.session.user._id,
   });
   if (!listing) return res.send("Your listing was not found.");
-  const mediaPaths = await getListingFiles(listing);
   await Cart.updateMany({}, { $pull: { listings: listing._id } });
   await Blog.updateMany({ listing: listing._id }, { $set: { listing: null } });
-  await removeUploadedPaths(mediaPaths);
+  await removeUploadedPaths(listing.media.map((file) => file.url));
   res.redirect("/auth/profile");
 });
 

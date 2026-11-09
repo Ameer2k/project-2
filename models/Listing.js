@@ -24,11 +24,10 @@ const listingSchema = new mongoose.Schema(
       type: [
         {
           url: { type: String, required: true },
-          type: { type: String, enum: ["image", "video"], required: true },
         },
       ],
       default: [],
-      validate: [(files) => files.length > 0, "A listing needs media."],
+      validate: [(files) => files.length > 0, "A listing needs an image."],
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
