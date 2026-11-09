@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      maxlength: 30,
     },
     email: {
       type: String,
@@ -24,13 +23,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: "",
-      maxlength: 50,
     },
     lastName: {
       type: String,
       trim: true,
       default: "",
-      maxlength: 50,
     },
     address: {
       type: String,
@@ -46,7 +43,6 @@ const userSchema = new mongoose.Schema(
     bio: {
       type: String,
       default: "",
-      maxlength: 300,
     },
     profilePicture: {
       type: String,

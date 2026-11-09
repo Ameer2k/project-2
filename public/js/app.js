@@ -88,3 +88,11 @@ function moveMedia(event) {
 for (const button of document.querySelectorAll(".media-prev, .media-next")) {
   button.addEventListener("click", moveMedia);
 }
+
+window.addEventListener("load", () => {
+  const toast = document.querySelector("#app-toast");
+  if (!toast) return;
+  if (window.bootstrap) return window.bootstrap.Toast.getOrCreateInstance(toast).show();
+  toast.classList.add("show");
+  window.setTimeout(() => toast.classList.remove("show"), 3500);
+});

@@ -1,88 +1,26 @@
 const router = require("express").Router();
-const crypto = require("node:crypto");
-const fs = require("node:fs/promises");
 const path = require("node:path");
-const multer = require("multer");
 const Listing = require("../models/Listing");
 const Cart = require("../models/Cart");
 const Blog = require("../models/Blog");
 const checkRole = require("../middleware/check-role");
+const {
+  createUploader,
+  removeUploadedFiles,
+  removeUploadedPaths,
+} = require("../middleware/file-uploads");
+const getReturnPath = require("../middleware/return-path");
 
 const MAX_FILES = 10;
-const uploadDirectory = path.join(__dirname, "..", "public", "uploads");
-const allowedTypes = {
+const upload = createUploader(25 * 1024 * 1024, {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".png": "image/png",
   ".webp": "image/webp",
   ".mp4": "video/mp4",
   ".webm": "video/webm",
-};
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: uploadDirectory,
-    filename: (req, file, done) => {
-      done(null, crypto.randomUUID() + path.extname(file.originalname).toLowerCase());
-    },
-  }),
-  limits: { fileSize: 25 * 1024 * 1024 },
-  fileFilter: (req, file, done) => {
-    const extension = path.extname(file.originalname).toLowerCase();
-    if (!allowedTypes[extension] || file.mimetype !== allowedTypes[extension]) {
-      const error = new Error("Unsupported uploaded file type.");
-      error.code = "UNSUPPORTED_UPLOAD_TYPE";
-      return done(error);
-    }
-    done(null, true);
-  },
 });
 const uploadListingMedia = upload.array("image", MAX_FILES);
-
-async function removeUploadedFiles(files) {
-  await Promise.all(
-    files.map(async (file) => {
-      if (!file.filename) return;
-      try {
-        await fs.unlink(
-          path.join(uploadDirectory, path.basename(file.filename)),
-        );
-      } catch (error) {
-        if (error.code !== "ENOENT") throw error;
-      }
-    }),
-  );
-}
-
-async function removeUploadedPaths(paths) {
-  const files = paths
-    .filter((value) => typeof value === "string" && value.startsWith("/uploads/"))
-    .map((value) => ({ filename: path.basename(value) }));
-  await removeUploadedFiles(files);
-}
-
-function getReturnPath(req, fallback) {
-  const back = req.body.back;
-  if (typeof back === "string" && back.startsWith("/") && !back.startsWith("//")) {
-    try {
-      const url = new URL(back, "http://local.invalid");
-      if (url.origin === "http://local.invalid") {
-        return url.pathname + url.search + url.hash;
-      }
-    } catch {}
-  }
-
-  const referer = req.get("Referer");
-  if (referer) {
-    try {
-      const url = new URL(referer);
-      const requestHost = req.get("Host");
-      if (requestHost && url.host.toLowerCase() === requestHost.toLowerCase()) {
-        return url.pathname + url.search + url.hash;
-      }
-    } catch {}
-  }
-  return fallback;
-}
 
 function mediaForListing(listing) {
   if (listing.media.length) return listing.media;

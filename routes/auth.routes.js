@@ -26,8 +26,8 @@ router.post("/sign-up", async (req, res) => {
   if (!username || !email || !password) {
     return res.send("Username, email and password are required.");
   }
-  if (password.length < 8 || password !== confirmPassword) {
-    return res.send("Use matching passwords with at least 8 characters.");
+  if (password.length < 4 || password !== confirmPassword) {
+    return res.send("Use matching passwords with at least 4 characters.");
   }
   if (role === "photographer" && !(businessName && address && phoneNumber)) {
     return res.send("Fill in the business name, address and phone number.");

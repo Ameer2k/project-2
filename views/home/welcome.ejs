@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Choose a photographer by their pictures. Browse packages, save favorites and write about the shoot." />
     <title>Frame</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/welcome.css" />
+    <link rel="stylesheet" href="/css/motion.css" />
   </head>
   <body class="guest-page">
     <%- include('../partials/navbar', { page: 'other' }) %>
@@ -13,13 +16,12 @@
     <main class="welcome-page">
             <header class="welcome-hero">
         <div>
-          <h1>Choose a photographer by their pictures.</h1>
+          <h1>Find the photographer for your next moment.</h1>
           
           <p class="welcome-lead">
-            Frame lists photography packages with real photos, 
-            videos and prices. Save the ones you like, 
-            follow the people behind them, 
-            and write about the shoot afterward.
+            Browse real photos, videos, and clear package prices.
+            Save your favorites, connect with photographers, and share
+            your experience after the shoot.
           </p>
           
           <div class="welcome-actions">
@@ -38,7 +40,7 @@
               <span>1</span>
             </div>
           
-            <div class="sheet-frame sheet-pick">
+            <div class="sheet-frame">
               <img src="/images/portrait.jpg" alt="A portrait lit in blue and violet" />
               <span>2</span>
             </div>
@@ -55,7 +57,7 @@
           
           </div>
           
-          <figcaption>Circle the frames you like. On Frame, that is a favorite.</figcaption>
+          <figcaption>Explore portfolios and find a style that feels like you.</figcaption>
         
         </figure>
       
@@ -66,9 +68,9 @@
           <h2>Booking a shoot</h2>
       
           <ul>
-            <li>Browse packages with photos, videos and fixed prices.</li>
-            <li>Save favorites, then add a package to your cart.</li>
-            <li>Follow photographers and write a blog about a package you saved.</li>
+            <li><strong>Explore.</strong> Browse photographer packages, photos, and prices.</li>
+            <li><strong>Choose.</strong> Save favorites and add a package to your cart.</li>
+            <li><strong>Share.</strong> Follow photographers and write about your experience.</li>
           </ul>
       
         </div>

@@ -11,17 +11,26 @@ router.get("/", async (req, res) => {
     "listings",
   );
   const cartItems = cart ? cart.listings : [];
-  res.render("cart/cart.ejs", { cartItems });
+  const toastMessage = req.session.toastMessage;
+  delete req.session.toastMessage;
+  res.render("cart/cart.ejs", { cartItems, toastMessage });
 });
 
 router.post("/add/:listingId", async (req, res) => {
   const listing = await Listing.findById(req.params.listingId);
   if (!listing) return res.send("Listing not found.");
+  const alreadyInCart = await Cart.exists({
+    owner: req.session.user._id,
+    listings: listing._id,
+  });
   await Cart.updateOne(
     { owner: req.session.user._id },
     { $addToSet: { listings: listing._id } }, // addToSet prevents duplicate packages.
     { upsert: true },
   );
+  req.session.toastMessage = alreadyInCart
+    ? "This package is already in your cart."
+    : "Added to your cart.";
   res.redirect("/cart");
 });
 

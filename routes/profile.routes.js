@@ -1,62 +1,23 @@
 const router = require("express").Router();
-const crypto = require("node:crypto");
-const fs = require("node:fs/promises");
 const mongoose = require("mongoose");
-const path = require("node:path");
-const multer = require("multer");
 const User = require("../models/User");
 const Listing = require("../models/Listing");
 const Blog = require("../models/Blog");
 const Cart = require("../models/Cart");
 const Order = require("../models/Order");
+const {
+  createUploader,
+  removeUploadedFiles,
+  removeUploadedPaths,
+} = require("../middleware/file-uploads");
+
 const PERSON_FIELDS = "username profilePicture firstName lastName";
-const uploadDirectory = path.join(__dirname, "..", "public", "uploads");
-const allowedTypes = {
+const profileUpload = createUploader(5 * 1024 * 1024, {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".png": "image/png",
   ".webp": "image/webp",
-};
-const profileUpload = multer({
-  storage: multer.diskStorage({
-    destination: uploadDirectory,
-    filename: (req, file, done) => {
-      done(null, crypto.randomUUID() + path.extname(file.originalname).toLowerCase());
-    },
-  }),
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, done) => {
-    const extension = path.extname(file.originalname).toLowerCase();
-    if (!allowedTypes[extension] || file.mimetype !== allowedTypes[extension]) {
-      const error = new Error("Unsupported uploaded file type.");
-      error.code = "UNSUPPORTED_UPLOAD_TYPE";
-      return done(error);
-    }
-    done(null, true);
-  },
 }).single("image");
-
-async function removeUploadedFiles(files) {
-  await Promise.all(
-    files.map(async (file) => {
-      if (!file.filename) return;
-      try {
-        await fs.unlink(
-          path.join(uploadDirectory, path.basename(file.filename)),
-        );
-      } catch (error) {
-        if (error.code !== "ENOENT") throw error;
-      }
-    }),
-  );
-}
-
-async function removeUploadedPaths(paths) {
-  const files = paths
-    .filter((value) => typeof value === "string" && value.startsWith("/uploads/"))
-    .map((value) => ({ filename: path.basename(value) }));
-  await removeUploadedFiles(files);
-}
 
 function mediaForListing(listing) {
   if (listing.media && listing.media.length) return listing.media;
