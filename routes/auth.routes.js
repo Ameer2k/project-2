@@ -1,7 +1,8 @@
-const router = require("express").Router();
-const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const isSignedIn = require("../middleware/is-signed-in");
+const User = require("../models/User.js");
+const isSignedIn = require("../middleware/is-signed-in.js");
+
+const router = require("express").Router();
 
 router.get("/sign-up", (req, res) => {
   if (req.session.user) return res.redirect("/");
@@ -33,13 +34,15 @@ router.post("/sign-up", async (req, res) => {
     return res.send("Fill in the business name, address and phone number.");
   }
 
-  const foundUser = await User.findOne({ $or: [{ username }, { email }] });
-  if (foundUser) return res.send("Username or email already taken.");
+  const existingUser = await User.findOne({
+    $or: [{ username }, { email }],
+  });
+  if (existingUser) return res.send("Username or email already taken.");
 
   await User.create({
     username,
     email,
-    password: await bcrypt.hash(password, 10), // Hash protects the password.
+    password: await bcrypt.hash(password, 10),
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     role,
@@ -47,6 +50,7 @@ router.post("/sign-up", async (req, res) => {
     address,
     phoneNumber,
   });
+
   res.redirect("/auth/sign-in");
 });
 
@@ -57,22 +61,25 @@ router.get("/sign-in", (req, res) => {
 
 router.post("/sign-in", async (req, res, next) => {
   const username = (req.body.username || "").trim();
-  const foundUser = await User.findOne({ username });
+  const user = await User.findOne({ username });
   const passwordMatches =
-    foundUser &&
-    (await bcrypt.compare(req.body.password || "", foundUser.password));
-  if (!passwordMatches) return res.send("Username or password is incorrect.");
+    user && (await bcrypt.compare(req.body.password || "", user.password));
+
+  if (!passwordMatches) {
+    return res.send("Username or password is incorrect.");
+  }
 
   req.session.regenerate((error) => {
     if (error) return next(error);
+
     req.session.user = {
-      _id: foundUser._id.toString(),
-      username: foundUser.username,
-      role: foundUser.role,
-      profilePicture: foundUser.profilePicture,
-      firstName: foundUser.firstName,
-      lastName: foundUser.lastName,
-      bio: foundUser.bio,
+      _id: user._id.toString(),
+      username: user.username,
+      role: user.role,
+      profilePicture: user.profilePicture,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      bio: user.bio,
     };
     res.redirect("/");
   });
@@ -81,6 +88,7 @@ router.post("/sign-in", async (req, res, next) => {
 router.post("/sign-out", (req, res, next) => {
   req.session.destroy((error) => {
     if (error) return next(error);
+
     res.clearCookie("connect.sid");
     res.redirect("/");
   });
@@ -89,6 +97,7 @@ router.post("/sign-out", (req, res, next) => {
 router.get("/profile", isSignedIn, (req, res) => {
   res.redirect("/profiles/" + req.session.user._id);
 });
+
 router.get("/edit-profile", isSignedIn, (req, res) => {
   res.redirect("/profiles/me/edit");
 });

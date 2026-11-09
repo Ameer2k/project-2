@@ -1,12 +1,18 @@
 function getReturnPath(req, fallback) {
   const back = req.body.back;
-  if (typeof back === "string" && back.startsWith("/") && !back.startsWith("//")) {
+  if (
+    typeof back === "string" &&
+    back.startsWith("/") &&
+    !back.startsWith("//")
+  ) {
     try {
       const url = new URL(back, "http://local.invalid");
       if (url.origin === "http://local.invalid") {
         return url.pathname + url.search + url.hash;
       }
-    } catch {}
+    } catch {
+      return fallback;
+    }
   }
 
   const referer = req.get("Referer");
@@ -17,8 +23,11 @@ function getReturnPath(req, fallback) {
       if (requestHost && url.host.toLowerCase() === requestHost.toLowerCase()) {
         return url.pathname + url.search + url.hash;
       }
-    } catch {}
+    } catch {
+      return fallback;
+    }
   }
+
   return fallback;
 }
 
