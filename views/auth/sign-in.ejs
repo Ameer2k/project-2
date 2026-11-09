@@ -11,21 +11,30 @@
     <main>
       <h1>Welcome back.</h1>
       <p>Your next perspective is waiting.</p>
-      
+
       <form action="/auth/sign-in" method="post">
-      
         <label for="username">Username</label>
-        <input type="text" id="username" name="username" autocomplete="username" placeholder="Your username" required />
-      
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Your username"
+          required
+        />
+
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Your password" required />
-      
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Your password"
+          required
+        />
+
         <button type="submit">Sign in</button>
-      
       </form>
-   
+
       <p>New to Frame? <a href="/auth/sign-up">Sign up</a></p>
-    
     </main>
   </body>
 </html>

@@ -10,42 +10,58 @@
     <%- include('../partials/navbar', { page: 'other' }) %>
     <main>
       <h1>Edit Listing</h1>
-      
-      <form action="/listings/<%= listing._id %>?_method=PUT" method="post" enctype="multipart/form-data">
-        
+
+      <form
+        action="/listings/<%= listing._id %>?_method=PUT"
+        method="post"
+        enctype="multipart/form-data"
+      >
         <label for="title">Package title</label>
         <input type="text" id="title" name="title" required value="<%= listing.title %>" />
-                
+
         <fieldset class="edit-media">
           <legend>Current photos</legend>
-          
           <div class="edit-media-grid">
             <% for (let file of listing.media) { %>
-              
               <div>
                 <img src="<%= file.url %>" alt="Package photo" />
-                <label><input type="checkbox" name="removeMedia" value="<%= file._id %>" /> Remove</label>
+                <label>
+                  <input type="checkbox" name="removeMedia" value="<%= file._id %>" />
+                  Remove
+                </label>
               </div>
-           
             <% } %>
           </div>
-        
         </fieldset>
-        
+
         <label for="image">Add more photos</label>
-        <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png,.webp" multiple />
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept=".jpg,.jpeg,.png,.webp"
+          multiple
+        />
         <small>Leave empty to keep the current files. Maximum 10 files in total, 25 MB each.</small>
-        
+
         <label for="description">Description</label>
         <textarea id="description" name="description" required><%= listing.description %></textarea>
-        
+
         <label for="price">Price ($)</label>
-        <input type="number" id="price" name="price" min="0" step="0.01" required value="<%= listing.price %>" />
-        
+        <input
+          type="number"
+          id="price"
+          name="price"
+          min="0"
+          step="0.01"
+          required
+          value="<%= listing.price %>"
+        />
+
         <button type="submit">Save changes</button>
-      
       </form>
-            <a href="/auth/profile">Back to profile</a>
+
+      <a href="/auth/profile">Back to profile</a>
     </main>
   </body>
 </html>

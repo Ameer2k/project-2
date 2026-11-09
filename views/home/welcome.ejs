@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Choose a photographer by their pictures. Browse packages, save favorites and write about the shoot." />
+    <meta
+      name="description"
+      content="Choose a photographer by their pictures. Browse packages, save favorites and write about the shoot."
+    />
     <title>Frame</title>
     <link rel="stylesheet" href="/css/base.css" />
   </head>
@@ -11,78 +14,60 @@
     <%- include('../partials/navbar', { page: 'other' }) %>
 
     <main class="welcome-page">
-            <header class="welcome-hero">
+      <header class="welcome-hero">
         <div>
           <h1>Find the photographer for your next moment.</h1>
-          
           <p class="welcome-lead">
-            Browse real photos and clear package prices.
-            Save your favorites, connect with photographers, and share
-            your experience after the shoot.
+            Browse real photos and clear package prices. Save your favorites,
+            connect with photographers, and share your experience after the shoot.
           </p>
-          
           <div class="welcome-actions">
             <a class="button" href="/auth/sign-up">Create an account</a>
             <a class="button" href="/auth/sign-in">Sign in</a>
           </div>
-        
         </div>
 
         <figure class="contact-sheet">
-          
           <div class="sheet-frames">
-          
             <div class="sheet-frame">
               <img src="/images/desert.jpg" alt="Red rock towers rising from a desert valley" />
               <span>1</span>
             </div>
-          
             <div class="sheet-frame">
               <img src="/images/portrait.jpg" alt="A portrait lit in blue and violet" />
               <span>2</span>
             </div>
-          
             <div class="sheet-frame">
               <img src="/images/coast.jpg" alt="A low wave at dusk" />
               <span>3</span>
             </div>
-          
             <div class="sheet-frame">
               <img src="/images/camera.jpg" alt="A camera and two lenses on a dark table" />
               <span>4</span>
             </div>
-          
           </div>
-          
           <figcaption>Explore portfolios and find a style that feels like you.</figcaption>
-        
         </figure>
-      
       </header>
 
-            <section class="welcome-roles" aria-label="What you can do on Frame">
+      <section class="welcome-roles" aria-label="What you can do on Frame">
         <div>
           <h2>Booking a shoot</h2>
-      
           <ul>
             <li><strong>Explore.</strong> Browse photographer packages, photos, and prices.</li>
             <li><strong>Choose.</strong> Save favorites and add a package to your cart.</li>
             <li><strong>Share.</strong> Write about your experience with a photographer.</li>
           </ul>
-      
         </div>
-      
         <div>
           <h2>Offering a shoot</h2>
-      
           <ul>
             <li>Publish a package with up to 10 photos.</li>
             <li>Set the price and edit it whenever you need to.</li>
             <li>Showcase your work and read what customers write.</li>
           </ul>
-      
         </div>
-      
       </section>
+    </main>
   </body>
 </html>

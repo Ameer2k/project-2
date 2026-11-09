@@ -8,68 +8,67 @@
     <script src="/js/app.js" defer></script>
   </head>
   <body>
-        <%- include('../partials/navbar', { page: 'other' }) %>
+    <%- include('../partials/navbar', { page: 'other' }) %>
     <main>
       <h1><%= listing.title %></h1>
-            
+
       <article class="post">
         <% const mediaFiles = listing.media; %>
-        
         <div class="listing-media" data-index="0" role="group" aria-label="Listing photos">
-          
           <div class="media-stage">
-           
             <% mediaFiles.forEach((file, index) => { %>
               <div class="media-slide" <%= index > 0 ? 'hidden' : '' %>>
-                <img class="post-image" src="<%= file.url %>" alt="<%= listing.title %> photo <%= index + 1 %>" />
+                <img
+                  class="post-image"
+                  src="<%= file.url %>"
+                  alt="<%= listing.title %> photo <%= index + 1 %>"
+                />
               </div>
             <% }) %>
-          
           </div>
-          
+
           <% if (mediaFiles.length > 1) { %>
             <div class="media-controls">
-              
               <button class="media-prev" type="button" aria-label="Previous photo">‹</button>
               <span class="media-count" aria-live="polite">1 / <%= mediaFiles.length %></span>
               <button class="media-next" type="button" aria-label="Next photo">›</button>
-            
             </div>
           <% } %>
-       
         </div>
+
         <p><%= listing.description %></p>
         <p class="price">$<%= listing.price.toFixed(2) %></p>
-       
+
         <% if (listing.owner) { %>
-          <p>Photographer: <a href="/profiles/<%= listing.owner._id %>"><%= listing.owner.username %></a></p>
+          <p>
+            Photographer:
+            <a href="/profiles/<%= listing.owner._id %>"><%= listing.owner.username %></a>
+          </p>
         <% } %>
         <p>Saved by <%= listing.favBy.length %> members.</p>
 
-                
         <form action="/listings/<%= listing._id %>/favorite" method="post">
-          
           <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
-          <button type="submit"><%= listing.favBy.some(id => id.equals(user._id)) ? 'Remove favorite' : 'Add favorite' %></button>
-        
+          <button type="submit">
+            <%= listing.favBy.some((id) => id.equals(user._id)) ? 'Remove favorite' : 'Add favorite' %>
+          </button>
         </form>
-        
+
         <% if (user.role === 'user') { %>
           <form class="add-to-cart" action="/cart/add/<%= listing._id %>" method="post">
-              <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
+            <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
             <button type="submit">Add to cart</button>
           </form>
         <% } %>
 
-                
         <% if (listing.owner && listing.owner._id.equals(user._id)) { %>
           <a href="/listings/<%= listing._id %>/edit">Edit listing</a>
           <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
             <button type="submit">Delete listing</button>
           </form>
         <% } %>
-      
       </article>
+
       <a href="/">Back to home</a>
     </main>
   </body>

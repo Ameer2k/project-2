@@ -12,53 +12,75 @@
     <main>
       <h1>Find your frame.</h1>
       <p>A new connection starts with you.</p>
-      
+
       <form action="/auth/sign-up" method="post">
-        
         <fieldset>
           <legend>Account type</legend>
           <label><input type="radio" name="role" value="user" checked /> User</label>
           <label><input type="radio" name="role" value="photographer" /> Photographer</label>
         </fieldset>
-        
+
         <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Choose a username" required />
-        
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Choose a username"
+          required
+        />
+
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="you@example.com" required />
-        
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+        />
+
         <label for="firstName">First name</label>
         <input type="text" id="firstName" name="firstName" placeholder="First name" />
-        
+
         <label for="lastName">Last name</label>
         <input type="text" id="lastName" name="lastName" placeholder="Last name" />
-        
+
         <fieldset id="photographer-fields" hidden>
           <legend>Photographer details</legend>
-          
+
           <label for="businessName">Business name</label>
           <input type="text" id="businessName" name="businessName" />
-          
+
           <label for="phoneNumber">Phone number</label>
           <input type="tel" id="phoneNumber" name="phoneNumber" />
-          
+
           <label for="address">Address</label>
           <input type="text" id="address" name="address" />
-        
         </fieldset>
-        
+
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" aria-describedby="password-hint" placeholder="At least 8 characters" required />
-        
+        <input
+          type="password"
+          id="password"
+          name="password"
+          aria-describedby="password-hint"
+          placeholder="At least 8 characters"
+          required
+        />
+
         <label for="confirmPassword">Confirm password</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Repeat your password" required />
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          placeholder="Repeat your password"
+          required
+        />
         <small id="password-hint">Use at least 8 characters and matching passwords.</small>
-        
+
         <button type="submit">Sign up</button>
-      
       </form>
+
       <p>Already have an account? <a href="/auth/sign-in">Sign in</a></p>
-   
     </main>
   </body>
 </html>

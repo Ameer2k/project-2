@@ -10,18 +10,17 @@
     <%- include('../partials/navbar', { page: 'other' }) %>
     <main>
       <h1>Edit Blog</h1>
-      
+
       <form action="/blogs/<%= blog._id %>?_method=PUT" method="post">
-      
         <label for="title">Blog title</label>
         <input type="text" id="title" name="title" required value="<%= blog.title %>" />
-      
+
         <label for="content">Your opinion / experience</label>
         <textarea id="content" name="content" required><%= blog.content %></textarea>
-      
+
         <button type="submit">Save changes</button>
-      
       </form>
+
       <a href="/auth/profile">Back to profile</a>
     </main>
   </body>

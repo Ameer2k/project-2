@@ -7,27 +7,33 @@
     <link rel="stylesheet" href="/css/base.css" />
   </head>
   <body>
-        <%- include('../partials/navbar', { page: 'other' }) %>
+    <%- include('../partials/navbar', { page: 'other' }) %>
     <main>
-            <article class="post">
+      <article class="post">
         <h1><%= blog.title %></h1>
         <% if (blog.owner) { %>
           <p>By <a href="/profiles/<%= blog.owner._id %>"><%= blog.owner.username %></a></p>
         <% } %>
         <% if (blog.listing) { %>
-          <img class="post-image" src="<%= blog.listing.image %>" alt="<%= blog.listing.title %>" />
+          <img
+            class="post-image"
+            src="<%= blog.listing.image %>"
+            alt="<%= blog.listing.title %>"
+          />
           <a href="/listings/<%= blog.listing._id %>">View <%= blog.listing.title %></a>
         <% } else { %>
           <p>The original listing was deleted.</p>
         <% } %>
         <p><%= blog.content %></p>
 
-                <form action="/blogs/<%= blog._id %>/favorite" method="post">
+        <form action="/blogs/<%= blog._id %>/favorite" method="post">
           <input type="hidden" name="back" value="/blogs/<%= blog._id %>" />
-          <button type="submit"><%= blog.favBy.some(id => id.equals(user._id)) ? 'Remove favorite' : 'Add favorite' %></button>
+          <button type="submit">
+            <%= blog.favBy.some((id) => id.equals(user._id)) ? 'Remove favorite' : 'Add favorite' %>
+          </button>
         </form>
 
-                <% if (blog.owner && blog.owner._id.equals(user._id)) { %>
+        <% if (blog.owner && blog.owner._id.equals(user._id)) { %>
           <a href="/blogs/<%= blog._id %>/edit">Edit blog</a>
           <form action="/blogs/<%= blog._id %>?_method=DELETE" method="post">
             <button type="submit">Delete blog</button>

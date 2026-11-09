@@ -11,36 +11,31 @@
     <%- include('../partials/navbar', { page: 'other' }) %>
     <main>
       <h1>Edit Profile</h1>
-      
+
       <form action="/profiles/me?_method=PUT" method="post" enctype="multipart/form-data">
-       
         <label for="image">Profile photo</label>
         <img src="<%= user.profilePicture %>" alt="Current profile photo" />
-      
         <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png,.webp" />
+
         <label for="firstName">First name</label>
-      
-        <input type="text" id="firstName" name="firstName" value="<%= user.firstName %>" maxlength="50" />
+        <input type="text" id="firstName" name="firstName" value="<%= user.firstName %>" />
+
         <label for="lastName">Last name</label>
-      
-        <input type="text" id="lastName" name="lastName" value="<%= user.lastName %>" maxlength="50" />
+        <input type="text" id="lastName" name="lastName" value="<%= user.lastName %>" />
+
         <label for="bio">Bio</label>
-      
         <textarea id="bio" name="bio"><%= user.bio %></textarea>
-      
         <button type="submit">Update Profile</button>
-      
       </form>
 
       <section>
         <h2>Delete account</h2>
         <p>This permanently removes your account, posts, favorites and history.</p>
-      
         <form action="/profiles/me?_method=DELETE" method="post" id="delete-account-form">
           <button type="submit">Delete my account</button>
         </form>
-      
       </section>
+
       <a href="/auth/profile">Back to profile</a>
     </main>
   </body>

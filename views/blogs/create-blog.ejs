@@ -10,34 +10,30 @@
     <%- include('../partials/navbar', { page: 'other' }) %>
     <main>
       <h1>Create Blog</h1>
-      
+
       <% if (!listings.length) { %>
         <p>Save a photographer listing to your favorites first.</p>
         <a href="/">Find a listing</a>
       <% } else { %>
-       
         <form action="/blogs" method="post">
-        
-        <label for="listing">Choose a listing from your favorites</label>
-        <select id="listing" name="listing" required>
-          <option value="">Choose a package</option>
-         
-          <% for (let listing of listings) { %>
-            <option value="<%= listing._id %>"><%= listing.title %></option>
-          <% } %>
-        
-        </select>
-        
-        <label for="title">Blog title</label>
-        <input type="text" id="title" name="title" required />
-        
-        <label for="content">Your opinion / experience</label>
-        <textarea id="content" name="content" required></textarea>
-        
-        <button type="submit">Publish blog</button>
-     
-      </form>
+          <label for="listing">Choose a listing from your favorites</label>
+          <select id="listing" name="listing" required>
+            <option value="">Choose a package</option>
+            <% for (let listing of listings) { %>
+              <option value="<%= listing._id %>"><%= listing.title %></option>
+            <% } %>
+          </select>
+
+          <label for="title">Blog title</label>
+          <input type="text" id="title" name="title" required />
+
+          <label for="content">Your opinion / experience</label>
+          <textarea id="content" name="content" required></textarea>
+
+          <button type="submit">Publish blog</button>
+        </form>
       <% } %>
+
       <a href="/auth/profile">Back to profile</a>
     </main>
   </body>
