@@ -15,6 +15,7 @@ router.post("/", checkRole("user"), async (req, res) => {
     favBy: req.session.user._id,
   });
   if (!listing) return res.send("Choose a listing from your favorites first.");
+
   await Blog.create({
     title: req.body.title,
     content: req.body.content,
@@ -31,6 +32,7 @@ router.get("/", (req, res) => {
 router.get("/:id", async (req, res) => {
   const blog = await Blog.findById(req.params.id).populate("owner listing");
   if (!blog) return res.send("Blog not found.");
+
   res.render("blogs/blog-detail.ejs", { blog });
 });
 
@@ -40,6 +42,7 @@ router.get("/:id/edit", async (req, res) => {
     owner: req.session.user._id,
   });
   if (!blog) return res.send("Your blog was not found.");
+
   res.render("blogs/edit-blog.ejs", { blog });
 });
 
@@ -49,6 +52,7 @@ router.put("/:id", async (req, res) => {
     owner: req.session.user._id,
   });
   if (!blog) return res.send("Your blog was not found.");
+
   blog.title = req.body.title;
   blog.content = req.body.content;
   await blog.save();
@@ -61,12 +65,14 @@ router.delete("/:id", async (req, res) => {
     owner: req.session.user._id,
   });
   if (!blog) return res.send("Your blog was not found.");
+
   res.redirect("/auth/profile");
 });
 
 router.post("/:id/favorite", async (req, res) => {
   const blog = await Blog.findById(req.params.id);
   if (!blog) return res.send("Blog not found.");
+
   const userId = req.session.user._id;
   const isFavorited = blog.favBy.some((id) => id.equals(userId));
   await Blog.updateOne(

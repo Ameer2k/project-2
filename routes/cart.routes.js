@@ -13,21 +13,24 @@ router.get("/", async (req, res) => {
   const cartItems = cart ? cart.listings : [];
   const toastMessage = req.session.toastMessage;
   delete req.session.toastMessage;
+
   res.render("cart/cart.ejs", { cartItems, toastMessage });
 });
 
 router.post("/add/:listingId", async (req, res) => {
   const listing = await Listing.findById(req.params.listingId);
   if (!listing) return res.send("Listing not found.");
+
   const alreadyInCart = await Cart.exists({
     owner: req.session.user._id,
     listings: listing._id,
   });
   await Cart.updateOne(
     { owner: req.session.user._id },
-    { $addToSet: { listings: listing._id } }, // addToSet prevents duplicate packages.
+    { $addToSet: { listings: listing._id } },
     { upsert: true },
   );
+
   req.session.toastMessage = alreadyInCart
     ? "This package is already in your cart."
     : "Added to your cart.";
@@ -57,18 +60,7 @@ router.post("/checkout", async (req, res) => {
   }));
   const total = items.reduce((sum, item) => sum + item.price, 0);
 
-  try {
-    await Order.create({ owner: req.session.user._id, items, total });
-  } catch (error) {
-    await Cart.updateOne(
-      { owner: req.session.user._id },
-      {
-        $setOnInsert: { listings: cart.listings.map((listing) => listing._id) },
-      },
-      { upsert: true },
-    );
-    throw error;
-  }
+  await Order.create({ owner: req.session.user._id, items, total });
   await Cart.deleteOne({ _id: cart._id });
   res.redirect("/cart");
 });
