@@ -8,7 +8,6 @@ const {
   removeUploadedFiles,
   removeUploadedPaths,
 } = require("../middleware/file-uploads.js");
-const getReturnPath = require("../middleware/return-path");
 const maxFiles = 10;
 const upload = createUploader(25 * 1024 * 1024, {
   ".jpg": "image/jpeg",
@@ -133,7 +132,7 @@ router.post("/:id/favorite", async (req, res) => {
       : { $addToSet: { favBy: userId } },
   );
 
-  res.redirect(getReturnPath(req, "/#listings"));
+  res.redirect("/#listings");
 });
 
 module.exports = router;

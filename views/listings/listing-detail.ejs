@@ -48,7 +48,6 @@
         <p>Saved by <%= listing.favBy.length %> members.</p>
 
         <form action="/listings/<%= listing._id %>/favorite" method="post">
-          <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
           <button type="submit">
             <%= listing.favBy.some((id) => id.equals(user._id)) ? 'Remove favorite' : 'Add favorite' %>
           </button>
@@ -56,7 +55,6 @@
 
         <% if (user.role === 'user') { %>
           <form class="add-to-cart" action="/cart/add/<%= listing._id %>" method="post">
-            <input type="hidden" name="back" value="/listings/<%= listing._id %>" />
             <button type="submit">Add to cart</button>
           </form>
         <% } %>

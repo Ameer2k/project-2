@@ -66,7 +66,6 @@
             <p class="price">$<%= listing.price.toFixed(2) %></p>
 
             <form action="/listings/<%= listing._id %>/favorite" method="post">
-              <input type="hidden" name="back" value="/#listings" />
               <button type="submit">
                 <%= listing.favBy.some((id) => id.equals(user._id)) ? '♥ Remove favorite' : '♡ Add favorite' %>
               </button>
@@ -74,7 +73,6 @@
 
             <% if (user.role === 'user') { %>
               <form class="add-to-cart" action="/cart/add/<%= listing._id %>" method="post">
-                <input type="hidden" name="back" value="/#listings" />
                 <button type="submit">Add to cart</button>
               </form>
             <% } %>
@@ -119,7 +117,6 @@
             <h2><a href="/blogs/<%= blog._id %>"><%= blog.title %></a></h2>
             <p><%= blog.content %></p>
             <form action="/blogs/<%= blog._id %>/favorite" method="post">
-              <input type="hidden" name="back" value="/#blogs" />
               <button type="submit">
                 <%= blog.favBy.some((id) => id.equals(user._id)) ? '♥ Remove favorite' : '♡ Add favorite' %>
               </button>

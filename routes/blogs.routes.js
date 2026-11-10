@@ -2,7 +2,6 @@ const router = require("express").Router();
 const Blog = require("../models/Blog");
 const Listing = require("../models/Listing");
 const checkRole = require("../middleware/check-role");
-const getReturnPath = require("../middleware/return-path");
 
 router.get("/new", checkRole("user"), async (req, res) => {
   const listings = await Listing.find({ favBy: req.session.user._id });
@@ -81,7 +80,7 @@ router.post("/:id/favorite", async (req, res) => {
       ? { $pull: { favBy: userId } }
       : { $addToSet: { favBy: userId } },
   );
-  res.redirect(getReturnPath(req, "/#blogs"));
+  res.redirect("/#blogs");
 });
 
 module.exports = router;

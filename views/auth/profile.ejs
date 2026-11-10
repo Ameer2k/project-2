@@ -129,7 +129,6 @@
                   <span class="tile-title"><%= listing.title %></span>
                 </a>
                 <form class="tile-save" action="/listings/<%= listing._id %>/favorite" method="post">
-                  <input type="hidden" name="back" value="/profiles/<%= profile._id %>#favorites" />
                   <button type="submit" aria-label="Remove from favorites">♥</button>
                 </form>
               </article>
@@ -149,7 +148,6 @@
                   <span class="tile-title"><%= blog.title %></span>
                 </a>
                 <form class="tile-save" action="/blogs/<%= blog._id %>/favorite" method="post">
-                  <input type="hidden" name="back" value="/profiles/<%= profile._id %>#favorites" />
                   <button type="submit" aria-label="Remove from favorites">♥</button>
                 </form>
               </article>
